@@ -19,4 +19,23 @@ export default class service {
             }
         );
     }
+    static postTask(post) {
+        params.append("title", post.title);
+        params.append("is_completed", post.is_completed);
+        params.append("due_date", post.due_date);
+        params.append("comments", post.comments);
+        params.append("description", post.description);
+        params.append("tags", post.tags);
+
+        return axios.post(
+            service.endpoint,
+            params,
+            {
+                headers: {
+                    'Authorization': `Bearer ${service.token}`,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+        );
+    }
 }

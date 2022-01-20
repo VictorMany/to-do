@@ -1,7 +1,7 @@
 <template>
   <div class="col-12 col-sm-6 col-md-4 div-parents">
     <v-card class="card-style div-parents" color="#142038">
-      <v-card-title>
+      <v-card-title class="pb-0">
         <v-row class="justify-space-between">
           <v-col class="pt-0 ps-2">
             <p>{{ title }}</p>
@@ -24,39 +24,20 @@
           </v-chip>
         </v-row>
       </v-card-title>
-
-      <v-card-text
-        v-if="due_date || comments || description"
-        class="div-parents"
-      >
-        <div v-if="description">
-          <h3>Description</h3>
-          {{ description }}
+      <v-row class="justify-space-between ma-2 mt-0 align-content-end">
+        <Form icon="mdi-pencil" />
+        <div v-if="due_date">
+          {{ due_date }}
         </div>
-        <div class="mt-4" v-if="comments">
-          <h3>Comments</h3>
-          {{ comments }}
-        </div>
-      </v-card-text>
-      <div class="text-subtitle-1 text-right mt-auto px-3 pb-2">
-        {{ due_date }}
-      </div>
-      <div v-if="tags">
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-chip-group active-class="white--text" column>
-            <v-chip small color="#4BCCDDD8" v-for="(t, i) in tags" :key="i"
-              >{{ t }}
-            </v-chip>
-          </v-chip-group>
-        </v-card-text>
-      </div>
+      </v-row>
     </v-card>
   </div>
 </template>
 
 <script>
+import Form from "./Form.vue";
 export default {
+  components: { Form },
   name: "Card",
 
   /**
