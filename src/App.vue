@@ -2,7 +2,7 @@
   <v-app>
     <app-bar />
     <v-main class="body-style">
-      <home msg="Welcome"/>
+      <home msg="Welcome to your tasks"/>
     </v-main>
   </v-app>
 </template>
@@ -28,7 +28,7 @@ export default {
 
 <style>
 .body-style {
-  background-color: #0d1117;
+  background-color: #0D1117;
   height: 100%;
   width: 100%;
 }
