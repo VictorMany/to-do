@@ -1,13 +1,7 @@
 <template>
-  <v-dialog
-    transition="dialog-bottom-transition"
-    v-model="dialog"
-    max-width="600"
-  >
+  <v-dialog v-model="dialog" max-width="600">
     <template v-slot:activator="{ on, attrs }">
-      <v-col cols="12" class="btn-dialog" @click="dialog = true" v-if="opened">
-      </v-col>
-
+      <div class="btn-dialog" @click="dialog = true" v-if="opened"></div>
       <v-btn
         v-if="icon == 'mdi-plus-circle'"
         color="blue-grey"
@@ -19,8 +13,6 @@
         <div
           class="
             d-none d-md-flex d-lg-none
-            pt-0
-            pb-0
             text-center
             float-center
             font-weight-light
@@ -57,12 +49,17 @@
           </v-chip>
           <v-chip
             @click="
-              is_completed == 0 && id ? (is_completed = 1) : (is_completed = 0)
+              is_completed.toString() == '0' && id
+                ? (is_completed = 1)
+                : (is_completed = 0)
             "
             small
-            class="float-right ms-auto black--text pe-2 ps-2"
-            :color="is_completed ? '#02C77B' : '#FFFB07'"
-            >{{ is_completed == 1 ? "Completed" : "Pending" }}
+            class="float-right ms-auto pe-2 ps-2"
+            :class="
+              is_completed.toString() == 1 ? 'white--text' : 'black--text'
+            "
+            :color="is_completed.toString() == 1 ? '#02C77B' : '#FFFB07'"
+            >{{ is_completed.toString() == 1 ? "Completed" : "Pending" }}
             <v-icon v-if="is_completed" class="ms-2"> mdi-check-circle </v-icon>
           </v-chip>
         </v-toolbar>
@@ -211,49 +208,59 @@
 
 
 <script>
+//Service endpoints
 import service from "../service/service";
+
 export default {
   name: "Form",
+  /**
+   * Form props
+   */
   props: {
     icon: { type: String },
     id: { type: Number },
     opened: { type: Boolean },
   },
 
+  /**
+   * Lifecycle methods
+   */
   created() {
+    //seting the editMode of the form
     if (this.icon === "mdi-plus-circle") {
       this.editMode = true;
     }
   },
 
   updated() {
+    //Calling function to consult the detail of a single task
     if (this.dialog == true) {
-      this.getTask(this.id);
+      this.getTask();
       this.tasks = this.$store.state.tasks;
     }
+    //Close dialog and execute the resetForm function
     if (this.dialog == false) {
       this.resetForm();
       this.editMode = false;
     }
   },
 
+  //data variable required for the form component
   data: (vm) => ({
+    comments: [],
     tasks: [],
+    tags: [],
     alert: false,
     editMode: false,
-    msg: "",
     valid: false,
     dialog: false,
+    msg: "",
     title: "",
     is_completed: 0,
-    due_date: new Date(),
-    tags: [],
-    comments: [],
     description: "",
     comment: "",
     tag: "",
     titleRules: [(v) => !!v || "Title is required"],
-
     date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
@@ -278,6 +285,7 @@ export default {
   },
 
   methods: {
+    //reset the form
     resetForm() {
       this.title = "";
       this.is_completed = 0;
@@ -286,8 +294,16 @@ export default {
       this.tags = [];
     },
 
+    /**
+     * @id checks if is a new task or is editing one
+     * @title allows to know if the variable title is not null
+     * the array variables are turned into string variables
+     */
+
+    //Add new task
     async addNewTask() {
       if (this.id) {
+        //if is an edit task
         this.updateTask();
       } else {
         if (this.title !== "") {
@@ -301,8 +317,10 @@ export default {
           };
           try {
             const response = await service.postTask(taskObj);
+            //Checking if the response is success
             if (response.data.detail === "Éxito al crear la tarea") {
               this.tasks[0].push(response.data.task);
+              //updating the state
               this.$store.dispatch("addTasks", this.tasks);
               this.dialog = false;
             }
@@ -319,6 +337,7 @@ export default {
       }
     },
 
+    //Update a task
     async updateTask() {
       if (this.title !== "") {
         let taskObj = {
@@ -332,6 +351,7 @@ export default {
         };
         try {
           const response = await service.updateTask(taskObj);
+          //Checking if the response is success
           if (response.data.detail === "Éxito al actualizar la tarea") {
             this.tasks[0].map((e, i) => {
               if (e.id == this.id) {
@@ -341,6 +361,7 @@ export default {
                 };
               }
             });
+            //updating the state
             this.$store.dispatch("addTasks", this.tasks);
             this.dialog = false;
           }
@@ -356,13 +377,14 @@ export default {
       }
     },
 
+    //Get the complete detail of a task
     async getTask() {
       if (this.id) {
         try {
           const response = await service.getTask(this.id);
           let data = response.data[0];
-
           if (response.data[0]) {
+            //Turning the tags into array variable
             if (data.tags) {
               if (data.tags.includes(",")) {
                 this.tags = data.tags.split(",");
@@ -370,6 +392,7 @@ export default {
                 this.tags.push(data.tags);
               }
             }
+            //Turning the tags into array variable
             if (data.comments) {
               if (data.comments.includes(",")) {
                 this.comments = data.comments.split(",");
@@ -390,10 +413,12 @@ export default {
       }
     },
 
+    //Delete a task by id
     async deleteTask() {
       if (this.id) {
         try {
           const response = await service.deleteTask(this.id);
+          //Checking if the response is success
           if (response.data.detail === "Éxito al eliminar la tarea") {
             this.tasks = this.$store.state.tasks;
             this.tasks[0].map((e, i) => {
@@ -401,6 +426,7 @@ export default {
                 this.tasks[0].splice(i, 1);
               }
             });
+            //updating the state
             this.$store.dispatch("addTasks", this.tasks);
           }
         } catch (error) {
@@ -411,6 +437,7 @@ export default {
       }
     },
 
+    //Pushing a comment to the comments for the detail task
     addComment() {
       if (this.comment) {
         this.comments.push(this.comment);
@@ -418,6 +445,7 @@ export default {
       }
     },
 
+    //Pushing a tag to the tags for the detail task
     addTag() {
       if (this.tag) {
         this.tags.push(this.tag);
@@ -425,15 +453,18 @@ export default {
       }
     },
 
+    //Removing comments with the position in array
     removeComment(pos) {
       this.comments.splice(pos, 1);
       this.comment = "";
     },
 
+    //Removing tags with the position in array
     removeTag(pos) {
       this.tags.splice(pos, 1);
       this.tag = "";
     },
+
     //Methods for date picker
     formatDate(date) {
       if (!date) return null;
@@ -441,9 +472,10 @@ export default {
       const [year, month, day] = date.split("-");
       return `${month}/${day}/${year}`;
     },
+
+    //Parsing date with the required format
     parseDate(date) {
       if (!date) return null;
-
       const [month, day, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
@@ -451,16 +483,15 @@ export default {
 };
 </script>
 
-
-
-
-<style>
+<style lang="scss" scoped>
+// style of the section inside of the Form
 .section-style {
   background-color: rgba(3, 7, 15, 0.486);
   border-radius: 0.5rem;
   margin-bottom: 1rem;
 }
 
+// style of btn-dialog when is needed to cover the full of the parent
 .btn-dialog {
   width: 100%;
   height: 100%;

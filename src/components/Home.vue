@@ -1,7 +1,7 @@
 <template>
   <div class="home-cont-style">
-    <h1>{{ msg }}</h1>
-
+    <!--The message welcome-->
+    <h1 class="styleh1">{{ msg }}</h1>
     <v-row class="mb-2">
       <v-col cols="12" md="6" class="ps-5 pe-5"
         ><v-text-field
@@ -27,19 +27,32 @@ import List from "./List.vue";
 export default {
   components: { List },
   name: "Home",
+  /**
+   * Home props
+   */
   props: {
     msg: String,
   },
+
   data: () => ({
     search: "",
     tasks: [],
   }),
 
+  /**
+   * Lifecycle methods
+   */
   created() {
     this.tasks = this.$store.state.tasks;
   },
 
   methods: {
+    /**
+     * @setSearch
+     * 1-. Get all the aux tasks array and seting to the tasks array (refill all tasks)
+     * 2-. If search is not null, then start the filtering the actual state tasks, so it can be reflected in other components
+     * 3-. Set the filtered tasks to the tasks state
+     */
     setSearch() {
       this.$store.dispatch("searchTasks", this.AUXTASKS);
       if (this.search == null) {
@@ -54,6 +67,7 @@ export default {
     },
   },
 
+  //Computed methods for consulting the actual and the aux state for tasks
   computed: {
     TASKS() {
       return this.$store.state.tasks[0];
@@ -66,13 +80,14 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1 {
+<style  lang="scss" scoped>
+//set typography to H1
+.styleh1 {
   color: #42b983;
   margin: 1rem;
 }
 
-/* Style dekstop screen */
+/* Style DESKTOP screen */
 @media all and (min-width: 701px) {
   .home-cont-style {
     padding-top: 10px;
@@ -80,13 +95,10 @@ h1 {
   }
 }
 
+/* Style MOBILE screen */
 @media all and (max-width: 701px) {
   .home-cont-style {
     padding: 10px;
   }
-}
-
-.w-100 {
-  width: 100%;
 }
 </style>

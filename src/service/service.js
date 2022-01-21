@@ -1,9 +1,14 @@
 import axios from 'axios';
+//creating a params variable of type URLSearchParams
 const params = new URLSearchParams()
+//Creating my token
 const token = 'VICTOKEN'
+//Token bearer for authentication
 const bearer = 'e864a0c9eda63181d7d65bc73e61e3dc6b74ef9b82f7049f1fc7d9fc8f29706025bd271d1ee1822b15d654a84e1a0997b973a46f923cc9977b3fcbb064179ecd'
-
+//Pushing my token to the params
 params.append('token', token)
+
+
 export default class service {
     static endpoint = "https://ecsdevapi.nextline.mx/vdev/tasks-challenge/tasks";
     //Get all the tasks

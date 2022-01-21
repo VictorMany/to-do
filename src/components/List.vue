@@ -13,7 +13,7 @@
         :tags="t.tags"
       />
     </v-row>
-
+    <!--Rendering other component for no tasks-->
     <div v-if="display">
       <h4 class="text-center">No tasks !</h4>
     </div>
@@ -21,24 +21,34 @@
 </template>
 
 <script>
+//Imports
 import Card from "./Card.vue";
 import service from "../service/service";
 
 export default {
   name: "List",
   components: { Card },
+  /**
+   * Lifecycle methods
+   */
+
+  //Calling get all the tasks
   created() {
     this.getAllTasks();
   },
+
+  //Checking if tasks array has items to iterate
   updated() {
     this.display = this.TASKS["length"] == 0;
   },
+
   data: () => ({
     tasks: [],
     display: false,
   }),
 
   methods: {
+    //get all the tasks method
     async getAllTasks() {
       try {
         const response = await service.getTasks();
@@ -51,6 +61,8 @@ export default {
       }
     },
   },
+
+  //Computed methods for TASKS state
   computed: {
     TASKS() {
       return this.$store.state.tasks[0];

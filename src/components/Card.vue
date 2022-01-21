@@ -1,12 +1,11 @@
 <template>
-  <div class="col-12 col-sm-6 col-md-6 div-parents" @click="openDetail()">
+  <div class="col-12 col-sm-6 col-md-6 div-parents">
     <v-card class="card-style div-parents" color="#0F477C11">
       <v-card-title class="pb-0 mb-0">
         <v-row class="justify-space-between">
           <v-col class="pt-0 ps-2 pb-0 font-weight-light">
             <p>{{ title }}</p>
           </v-col>
-
           <v-chip
             small
             class="float-right mt-2 me-2 pe-1 ps-2"
@@ -24,21 +23,13 @@
           </v-chip>
         </v-row>
       </v-card-title>
-
       <div
         v-if="due_date"
         class="text--secondary text-start ps-3 pb-2 font-weight-thin date-style"
       >
         {{ due_date }}
       </div>
-
-      <div class="alert">
-        <v-alert border="bottom" dark v-if="alert" color="warning">
-          {{ msg }}
-        </v-alert>
-      </div>
-
-      <v-overlay absolute color="#00000000" class="div-parent">
+      <v-overlay absolute color="#00000000" class="div-overlay">
         <v-col cols="12" class="detail-style">
           <Form :id="id" :opened="true" />
         </v-col>
@@ -54,13 +45,13 @@ export default {
   name: "Card",
 
   data: () => ({
-    alert: false,
     msg: "",
-    open: false,
   }),
+
   /**
-   * Props card
+   *  card props
    */
+
   props: {
     //Title propis required
     id: { type: Number, required: true },
@@ -71,17 +62,11 @@ export default {
     //The rest of the props are optionals
     due_date: String,
   },
-
-  methods: {
-    async openDetail() {
-      console.log("CLICKED");
-      this.open = true;
-    },
-  },
 };
 </script>
 
 <style lang="scss" scoped>
+// CARD style
 .card-style {
   border-width: thin;
   border-style: solid;
@@ -89,22 +74,27 @@ export default {
   flex-grow: 1;
   margin: 0.5rem;
 }
+
+// allow full height for content child
 .div-parents {
   display: flex;
   flex-direction: column;
   padding: 0;
 }
 
+// the date typografy
 .date-style {
   font-size: 12px;
 }
 
+// Full height and width for the child div
 .detail-style {
   width: 560px;
   height: 100px;
 }
 
-.div-parent {
+// allows to hide the overflow child content
+.div-overlay {
   overflow: hidden;
 }
 </style>
