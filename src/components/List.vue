@@ -2,8 +2,9 @@
   <div>
     <v-row no-gutters>
       <card
-        v-for="(t, i) in tasks"
-        :key="i"
+        v-for="t in TASKS"
+        :key="t.id"
+        :id="t.id"
         :title="t.title"
         :is_completed="t.is_completed"
         :comments="t.comments"
@@ -12,6 +13,11 @@
         :tags="t.tags"
       />
     </v-row>
+
+    <div v-if="display">
+      <h4 class="text-center">No tasks yet !</h4>
+      <p class="text-center mt-3">Create one :)</p>
+    </div>
   </div>
 </template>
 
@@ -25,24 +31,31 @@ export default {
   created() {
     this.getAllTasks();
   },
+  updated() {
+    this.display = this.TASKS["length"] == 0;
+  },
   data: () => ({
     tasks: [],
+    display: false,
   }),
 
   methods: {
     async getAllTasks() {
       try {
         const response = await service.getTasks();
-        console.log(response.data);
-        this.tasks = response.data;
-        console.log(response.data, "HERE");
+        if (response.data) {
+          this.tasks = response.data;
+          this.$store.dispatch("addTasks", this.tasks);
+        }
       } catch (error) {
         console.log(error);
       }
     },
   },
+  computed: {
+    TASKS() {
+      return this.$store.state.tasks[0];
+    },
+  },
 };
 </script>
-
-<style lang="css">
-</style>

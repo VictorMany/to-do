@@ -41,5 +41,16 @@ export default {
   width: 0px;
   background: transparent; /* Disable scrollbar Chrome/Safari/Webkit */
 }
+
+p {
+  word-break: normal;
+}
+
+.alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 </style>
 

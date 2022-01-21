@@ -10,10 +10,6 @@ import List from "./List.vue";
 export default {
   components: { List },
   name: "Home",
-
-  created() {
-    console.log(this.msg);
-  },
   props: {
     msg: String,
   },
@@ -30,8 +26,8 @@ h1 {
 /* Style dekstop screen */
 @media all and (min-width: 701px) {
   .home-cont-style {
-    padding: 34px;
     padding-top: 10px;
+    padding-inline: 10%;
   }
 }
 

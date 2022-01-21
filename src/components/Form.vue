@@ -7,6 +7,7 @@
     <template v-slot:activator="{ on, attrs }">
       <v-chip
         color="blue"
+        outlined
         class="white--text"
         small
         @click="dialog = true"
@@ -17,7 +18,7 @@
 
       <v-btn
         color="blue-grey"
-        class="ma-2 white--text"
+        class="ma-2 white--text pe-1 ps-1"
         outlined
         v-bind="attrs"
         v-on="on"
@@ -34,129 +35,144 @@
     <template v-slot:default="dialog">
       <v-card>
         <v-toolbar color="rgba(3, 7, 15, 0.486)"
-          ><strong>ADD NEW TASK</strong></v-toolbar
-        >
-        <v-card-text>
-          <div>
-            <v-form v-model="valid">
-              <v-container>
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="title"
-                      :rules="titleRules"
-                      label="Title"
-                      required
-                    >
-                      <v-icon slot="prepend">mdi-format-title</v-icon>
-                    </v-text-field>
-                  </v-col>
+          ><strong>ADD NEW TASK</strong>
+          <v-chip
+            @click="
+              is_completed == 0 && id ? (is_completed = 1) : (is_completed = 0)
+            "
+            class="float-right ms-auto black--text pe-2 ps-2"
+            :color="is_completed ? '#02C77B' : '#FFFB07'"
+            >{{ is_completed == 1 ? "Completed" : "Pending" }}
+            <v-icon v-if="is_completed" class="ms-2"> mdi-check-circle </v-icon>
+          </v-chip>
+        </v-toolbar>
+        <v-card-text class="pa-1">
+          <v-form v-model="valid">
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="title"
+                    :rules="titleRules"
+                    label="Title"
+                    required
+                  >
+                    <v-icon slot="prepend">mdi-format-title</v-icon>
+                  </v-text-field>
+                </v-col>
 
-                  <v-col cols="12" md="6">
-                    <v-menu
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      transition="scale-transition"
-                      offset-y
-                      max-width="290px"
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="computedDateFormatted"
-                          persistent-hint
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        color="info"
-                        v-model="date"
-                        no-title
-                        @input="menu2 = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
+                <v-col cols="12" md="6">
+                  <v-menu
+                    v-model="menu2"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="computedDateFormatted"
+                        persistent-hint
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      color="info"
+                      v-model="date"
+                      no-title
+                      @input="menu2 = false"
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
 
-                  <v-col cols="12" class="pb-0">
-                    <v-textarea
-                      outlined
-                      height="100"
-                      name="input-7-4"
-                      label="Task description"
-                      :value="description"
-                      v-model="description"
-                    ></v-textarea>
-                  </v-col>
+                <v-col cols="12" class="pb-0">
+                  <v-textarea
+                    outlined
+                    height="100"
+                    name="input-7-4"
+                    label="Task description"
+                    :value="description"
+                    v-model="description"
+                  ></v-textarea>
+                </v-col>
 
-                  <v-col cols="12" class="section-style pa-5">
-                    <h3 class="pb-2">Comments</h3>
-                    <v-alert
-                      shaped
-                      dark
-                      class="py-1"
-                      dense
+                <v-col cols="12" class="section-style pa-5">
+                  <h3 class="pb-2">Comments</h3>
+                  <v-row class="py-1">
+                    <v-chip
+                      class="ma-4 pe-1"
                       color="info"
                       v-for="(c, i) in comments"
                       :key="i"
                     >
                       {{ c }}
-
-                      <v-icon class="float-right" @click="removeComment(i)"
+                      <v-icon class="float-right ms-1" @click="removeComment(i)"
                         >mdi-close-circle</v-icon
                       >
-                    </v-alert>
+                    </v-chip>
+                  </v-row>
 
-                    <v-text-field v-model="comment" label="Comment">
-                      <v-icon slot="prepend"> mdi-comment </v-icon>
-                    </v-text-field>
-                    <v-card-text class="text-center">
-                      <v-divider class="mx-4" vertical></v-divider>
-                      <v-btn small outlined color="info" @click="addComment()">
-                        Add comment
-                      </v-btn>
-                    </v-card-text>
-                  </v-col>
+                  <v-text-field v-model="comment" label="Comment">
+                    <v-icon slot="prepend"> mdi-comment </v-icon>
+                  </v-text-field>
+                  <v-card-text class="text-center">
+                    <v-divider class="mx-4" vertical></v-divider>
+                    <v-btn small outlined color="info" @click="addComment()">
+                      Add comment
+                    </v-btn>
+                  </v-card-text>
+                </v-col>
 
-                  <v-col cols="12" class="section-style pa-5">
-                    <h3 class="pb-5">Tags</h3>
-                    <v-row>
-                      <v-chip
-                        class="ma-4"
-                        color="info"
+                <v-col cols="12" class="section-style pa-5">
+                  <h3 class="pb-5">Tags</h3>
+                  <v-row>
+                    <v-chip
+                      class="ma-4 pe-1"
+                      color="info"
+                      small
+                      v-for="(t, i) in tags"
+                      :key="i"
+                    >
+                      {{ t }}
+
+                      <v-icon
                         small
-                        v-for="(t, i) in tags"
-                        :key="i"
+                        class="float-right ms-1"
+                        @click="removeTag(i)"
+                        >mdi-close-circle</v-icon
                       >
-                        {{ t }}
+                    </v-chip>
+                  </v-row>
 
-                        <v-icon class="float-right ms-1" @click="removeTag(i)"
-                          >mdi-close-circle</v-icon
-                        >
-                      </v-chip>
-                    </v-row>
-
-                    <v-text-field v-model="tag" label="Tag">
-                      <v-icon slot="prepend"> mdi-tag </v-icon>
-                    </v-text-field>
-                    <v-card-text class="text-center">
-                      <v-divider class="mx-4" vertical></v-divider>
-                      <v-btn small outlined color="info" @click="addTag()">
-                        Add tag
-                      </v-btn>
-                    </v-card-text>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-form>
-          </div></v-card-text
-        >
+                  <v-text-field v-model="tag" label="Tag">
+                    <v-icon slot="prepend"> mdi-tag </v-icon>
+                  </v-text-field>
+                  <v-card-text class="text-center">
+                    <v-divider class="mx-4" vertical></v-divider>
+                    <v-btn small outlined color="info" @click="addTag()">
+                      Add tag
+                    </v-btn>
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn text @click="addNewTask()">Submit</v-btn>
+          <v-btn text @click="addNewTask()">{{
+            id ? "UPDATE" : "PUBLISH"
+          }}</v-btn>
           <v-btn text @click="dialog.value = false">Close</v-btn>
         </v-card-actions>
+        <div class="alert">
+          <v-alert border="bottom" dark v-model="alert" color="warning">
+            {{ msg }}
+          </v-alert>
+        </div>
       </v-card>
     </template>
   </v-dialog>
@@ -167,12 +183,23 @@
 import service from "../service/service";
 export default {
   name: "Form",
-
   props: {
     icon: { type: String, required: true },
+    id: { type: Number },
+  },
+
+  updated() {
+    if (this.dialog == true) {
+      this.getTask(this.id);
+      this.tasks = this.$store.state.tasks;
+    }
+    if (this.dialog == false) this.resetForm();
   },
 
   data: (vm) => ({
+    tasks: [],
+    alert: false,
+    msg: "",
     valid: false,
     dialog: false,
     title: "",
@@ -203,16 +230,58 @@ export default {
   },
 
   watch: {
-    date(val) {
-      console.log(val);
+    date() {
       this.dateFormatted = this.formatDate(this.date);
     },
   },
 
   methods: {
+    resetForm() {
+      this.title = "";
+      this.is_completed = 0;
+      this.comments = [];
+      this.description = "";
+      this.tags = [];
+    },
+
     async addNewTask() {
+      if (this.id) {
+        this.updateTask();
+      } else {
+        if (this.title !== "") {
+          let taskObj = {
+            title: this.title,
+            is_completed: this.is_completed,
+            due_date: this.date,
+            comments: this.comments.join(),
+            description: this.description,
+            tags: this.tags.join(),
+          };
+
+          try {
+            const response = await service.postTask(taskObj);
+            if (response.data.detail === "Éxito al crear la tarea") {
+              this.tasks[0].push(response.data.task);
+              this.$store.dispatch("addTasks", this.tasks);
+              this.dialog = false;
+            }
+          } catch (error) {
+            this.alert = true;
+            this.msg = "An error has ocurred " + error;
+            setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+          }
+        } else {
+          this.alert = true;
+          this.msg = "Title is required";
+          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+        }
+      }
+    },
+
+    async updateTask() {
       if (this.title !== "") {
         let taskObj = {
+          id: this.id,
           title: this.title,
           is_completed: this.is_completed,
           due_date: this.date,
@@ -220,18 +289,64 @@ export default {
           description: this.description,
           tags: this.tags.join(),
         };
-        console.log(taskObj);
         try {
-          const response = await service.postTask(taskObj);
-          console.log(response.data);
-          this.dialog = false;
+          const response = await service.updateTask(taskObj);
+          if (response.data.detail === "Éxito al actualizar la tarea") {
+            this.tasks[0].map((e, i) => {
+              if (e.id == this.id) {
+                this.tasks[0][i] = {
+                  ...this.tasks[0][i],
+                  ...response.data.task,
+                };
+              }
+            });
+            this.$store.dispatch("addTasks", this.tasks);
+            this.dialog = false;
+          }
         } catch (error) {
-          console.log(error);
+          this.alert = true;
+          this.msg = "An error has ocurred " + error;
+          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
         }
       } else {
-        console.log("No ");
+        this.alert = true;
+        this.msg = "Title is required";
+        setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
       }
-      this.stepobj = {};
+    },
+
+    async getTask() {
+      if (this.id) {
+        try {
+          const response = await service.getTask(this.id);
+          let data = response.data[0];
+
+          if (response.data[0]) {
+            if (data.tags) {
+              if (data.tags.includes(",")) {
+                this.tags = data.tags.split(",");
+              } else {
+                this.tags.push(data.tags);
+              }
+            }
+            if (data.comments) {
+              if (data.comments.includes(",")) {
+                this.comments = data.comments.split(",");
+              } else {
+                this.comments.push(data.comments);
+              }
+            }
+            this.title = data.title;
+            this.description = data.description;
+            this.is_completed = data.is_completed;
+            this.date = data.due_date;
+          }
+        } catch (error) {
+          this.alert = true;
+          this.msg = "An error has ocurred " + error;
+          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+        }
+      }
     },
 
     addComment() {
@@ -239,7 +354,6 @@ export default {
         this.comments.push(this.comment);
         this.comment = "";
       }
-      console.log(this.comments);
     },
 
     addTag() {
@@ -247,7 +361,6 @@ export default {
         this.tags.push(this.tag);
         this.tag = "";
       }
-      console.log(this.tags);
     },
 
     removeComment(pos) {
