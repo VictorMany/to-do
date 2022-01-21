@@ -1,19 +1,19 @@
 import axios from 'axios';
 const params = new URLSearchParams()
-const token = 'e864a0c9eda63181d7d65bc73e61e3dc6b74ef9b82f7049f1fc7d9fc8f29706025bd271d1ee1822b15d654a84e1a0997b973a46f923cc9977b3fcbb064179ecd'
-params.append('token', token)
+const token = 'VICTOKEN'
+const bearer = 'e864a0c9eda63181d7d65bc73e61e3dc6b74ef9b82f7049f1fc7d9fc8f29706025bd271d1ee1822b15d654a84e1a0997b973a46f923cc9977b3fcbb064179ecd'
 
+params.append('token', token)
 export default class service {
     static endpoint = "https://ecsdevapi.nextline.mx/vdev/tasks-challenge/tasks";
     //Get all the tasks
     static getTasks() {
         return axios.get(
             service.endpoint,
-
             {
                 params,
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${bearer}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }
@@ -26,7 +26,7 @@ export default class service {
             {
                 params,
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${bearer}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }
@@ -34,19 +34,19 @@ export default class service {
     }
     //Post a new task
     static postTask(post) {
-        params.append("title", post.title);
-        params.append("is_completed", post.is_completed);
-        params.append("due_date", post.due_date);
-        params.append("comments", post.comments);
-        params.append("description", post.description);
-        params.append("tags", post.tags);
+        for (let property in post) {
+            var encodedKey = encodeURIComponent(property);
+            if (post[property] != null) {
+                params.append(encodedKey, post[property]);
+            }
+        }
 
         return axios.post(
             service.endpoint,
             params,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${bearer}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }
@@ -54,19 +54,19 @@ export default class service {
     }
     //Update task by ID
     static updateTask(post) {
-        params.append("title", post.title);
-        params.append("is_completed", post.is_completed);
-        params.append("due_date", post.due_date);
-        params.append("comments", post.comments);
-        params.append("description", post.description);
-        params.append("tags", post.tags);
+        for (let property in post) {
+            var encodedKey = encodeURIComponent(property);
+            if (post[property] != null) {
+                params.append(encodedKey, post[property]);
+            }
+        }
 
         return axios.put(
             `${service.endpoint}/${post.id}`,
             params,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${bearer}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }
@@ -79,7 +79,7 @@ export default class service {
             {
                 params,
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${bearer}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }

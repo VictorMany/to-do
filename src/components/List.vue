@@ -15,8 +15,7 @@
     </v-row>
 
     <div v-if="display">
-      <h4 class="text-center">No tasks yet !</h4>
-      <p class="text-center mt-3">Create one :)</p>
+      <h4 class="text-center">No tasks !</h4>
     </div>
   </div>
 </template>

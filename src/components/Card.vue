@@ -1,9 +1,9 @@
 <template>
-  <div class="col-12 col-sm-6 col-md-6 div-parents">
+  <div class="col-12 col-sm-6 col-md-6 div-parents" @click="openDetail()">
     <v-card class="card-style div-parents" color="#0F477C11">
-      <v-card-title class="pb-0">
+      <v-card-title class="pb-0 mb-0">
         <v-row class="justify-space-between">
-          <v-col class="pt-0 ps-2">
+          <v-col class="pt-0 ps-2 pb-0 font-weight-light">
             <p>{{ title }}</p>
           </v-col>
 
@@ -14,7 +14,7 @@
             outlined
             >{{ is_completed.toString() == "1" ? "Completed" : "Pending" }}
             <v-icon
-              v-if="is_completed"
+              v-if="is_completed.toString() != '0'"
               small
               class="ms-2"
               :color="is_completed.toString() == '1' ? '#02C77B' : 'yellow'"
@@ -24,43 +24,39 @@
           </v-chip>
         </v-row>
       </v-card-title>
-      <v-row class="justify-space-between ma-2 mt-0 align-content-end">
-        <div>
-          <Form :id="id" icon="mdi-pencil" />
-          <v-chip
-            color="blue"
-            outlined
-            class="white--text ms-2"
-            small
-            @click="deleteTask()"
-          >
-            <v-icon small>mdi-trash-can</v-icon>
-          </v-chip>
-        </div>
-        <div v-if="due_date" class="text--secondary">
-          {{ due_date }}
-        </div>
-      </v-row>
+
+      <div
+        v-if="due_date"
+        class="text--secondary text-start ps-3 pb-2 font-weight-thin date-style"
+      >
+        {{ due_date }}
+      </div>
+
       <div class="alert">
         <v-alert border="bottom" dark v-if="alert" color="warning">
           {{ msg }}
         </v-alert>
       </div>
+
+      <v-overlay absolute color="#00000000" class="div-parent">
+        <v-col cols="12" class="detail-style">
+          <Form :id="id" :opened="true" />
+        </v-col>
+      </v-overlay>
     </v-card>
   </div>
 </template>
 
 <script>
-import service from "../service/service";
 import Form from "./Form.vue";
 export default {
   components: { Form },
   name: "Card",
 
   data: () => ({
-    tasks: [],
     alert: false,
     msg: "",
+    open: false,
   }),
   /**
    * Props card
@@ -77,25 +73,9 @@ export default {
   },
 
   methods: {
-    async deleteTask() {
-      if (this.id) {
-        try {
-          const response = await service.deleteTask(this.id);
-          if (response.data.detail === "Éxito al eliminar la tarea") {
-            this.tasks = this.$store.state.tasks;
-            this.tasks[0].map((e, i) => {
-              if (e.id === this.id) {
-                this.tasks[0].splice(i, 1);
-              }
-            });
-            this.$store.dispatch("addTasks", this.tasks);
-          }
-        } catch (error) {
-          this.alert = true;
-          this.msg = "Ocurrió un error " + error;
-          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
-        }
-      }
+    async openDetail() {
+      console.log("CLICKED");
+      this.open = true;
     },
   },
 };
@@ -113,5 +93,18 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 0;
+}
+
+.date-style {
+  font-size: 12px;
+}
+
+.detail-style {
+  width: 560px;
+  height: 100px;
+}
+
+.div-parent {
+  overflow: hidden;
 }
 </style>

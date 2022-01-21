@@ -5,41 +5,61 @@
     max-width="600"
   >
     <template v-slot:activator="{ on, attrs }">
-      <v-chip
-        color="blue"
-        outlined
-        class="white--text"
-        small
-        @click="dialog = true"
-        v-if="icon == 'mdi-pencil'"
-      >
-        <v-icon small>{{ icon }}</v-icon>
-      </v-chip>
+      <v-col cols="12" class="btn-dialog" @click="dialog = true" v-if="opened">
+      </v-col>
 
       <v-btn
+        v-if="icon == 'mdi-plus-circle'"
         color="blue-grey"
         class="ma-2 white--text pe-1 ps-1"
         outlined
         v-bind="attrs"
         v-on="on"
-        v-if="icon != 'mdi-pencil'"
       >
         <div
-          class="d-none d-md-flex d-lg-none pt-0 pb-0 text-center float-center"
+          class="
+            d-none d-md-flex d-lg-none
+            pt-0
+            pb-0
+            text-center
+            float-center
+            font-weight-light
+            white--text
+          "
         >
           Add new
         </div>
-        <v-icon>{{ icon }}</v-icon></v-btn
+        <v-icon color="white" class="pa-1">{{ icon }}</v-icon></v-btn
       >
     </template>
     <template v-slot:default="dialog">
       <v-card>
-        <v-toolbar color="rgba(3, 7, 15, 0.486)"
-          ><strong>ADD NEW TASK</strong>
+        <v-toolbar color="rgba(3, 7, 15, 0.486)">
+          <v-chip
+            v-if="opened"
+            color="blue"
+            outlined
+            class="white--text ms-2"
+            small
+            @click="deleteTask()"
+          >
+            <v-icon small>mdi-trash-can</v-icon>
+          </v-chip>
+          <v-chip
+            v-if="opened"
+            color="blue"
+            :outlined="!editMode"
+            class="white--text ms-2"
+            small
+            @click="editMode = !editMode"
+          >
+            <v-icon small>mdi-pencil</v-icon>
+          </v-chip>
           <v-chip
             @click="
               is_completed == 0 && id ? (is_completed = 1) : (is_completed = 0)
             "
+            small
             class="float-right ms-auto black--text pe-2 ps-2"
             :color="is_completed ? '#02C77B' : '#FFFB07'"
             >{{ is_completed == 1 ? "Completed" : "Pending" }}
@@ -56,6 +76,7 @@
                     :rules="titleRules"
                     label="Title"
                     required
+                    :readonly="!editMode"
                   >
                     <v-icon slot="prepend">mdi-format-title</v-icon>
                   </v-text-field>
@@ -82,6 +103,7 @@
                     </template>
                     <v-date-picker
                       color="info"
+                      :readonly="!editMode"
                       v-model="date"
                       no-title
                       @input="menu2 = false"
@@ -92,6 +114,7 @@
                 <v-col cols="12" class="pb-0">
                   <v-textarea
                     outlined
+                    :readonly="!editMode"
                     height="100"
                     name="input-7-4"
                     label="Task description"
@@ -104,22 +127,29 @@
                   <h3 class="pb-2">Comments</h3>
                   <v-row class="py-1">
                     <v-chip
-                      class="ma-4 pe-1"
+                      class="ma-4 pe-2"
                       color="info"
                       v-for="(c, i) in comments"
                       :key="i"
                     >
                       {{ c }}
-                      <v-icon class="float-right ms-1" @click="removeComment(i)"
+                      <v-icon
+                        v-if="editMode"
+                        class="float-right ms-1"
+                        @click="removeComment(i)"
                         >mdi-close-circle</v-icon
                       >
                     </v-chip>
                   </v-row>
 
-                  <v-text-field v-model="comment" label="Comment">
+                  <v-text-field
+                    v-if="editMode"
+                    v-model="comment"
+                    label="Comment"
+                  >
                     <v-icon slot="prepend"> mdi-comment </v-icon>
                   </v-text-field>
-                  <v-card-text class="text-center">
+                  <v-card-text v-if="editMode" class="text-center">
                     <v-divider class="mx-4" vertical></v-divider>
                     <v-btn small outlined color="info" @click="addComment()">
                       Add comment
@@ -131,7 +161,7 @@
                   <h3 class="pb-5">Tags</h3>
                   <v-row>
                     <v-chip
-                      class="ma-4 pe-1"
+                      class="ma-4 pe-2"
                       color="info"
                       small
                       v-for="(t, i) in tags"
@@ -143,15 +173,16 @@
                         small
                         class="float-right ms-1"
                         @click="removeTag(i)"
+                        v-if="editMode"
                         >mdi-close-circle</v-icon
                       >
                     </v-chip>
                   </v-row>
 
-                  <v-text-field v-model="tag" label="Tag">
+                  <v-text-field v-if="editMode" v-model="tag" label="Tag">
                     <v-icon slot="prepend"> mdi-tag </v-icon>
                   </v-text-field>
-                  <v-card-text class="text-center">
+                  <v-card-text v-if="editMode" class="text-center">
                     <v-divider class="mx-4" vertical></v-divider>
                     <v-btn small outlined color="info" @click="addTag()">
                       Add tag
@@ -184,8 +215,15 @@ import service from "../service/service";
 export default {
   name: "Form",
   props: {
-    icon: { type: String, required: true },
+    icon: { type: String },
     id: { type: Number },
+    opened: { type: Boolean },
+  },
+
+  created() {
+    if (this.icon === "mdi-plus-circle") {
+      this.editMode = true;
+    }
   },
 
   updated() {
@@ -193,12 +231,16 @@ export default {
       this.getTask(this.id);
       this.tasks = this.$store.state.tasks;
     }
-    if (this.dialog == false) this.resetForm();
+    if (this.dialog == false) {
+      this.resetForm();
+      this.editMode = false;
+    }
   },
 
   data: (vm) => ({
     tasks: [],
     alert: false,
+    editMode: false,
     msg: "",
     valid: false,
     dialog: false,
@@ -253,11 +295,10 @@ export default {
             title: this.title,
             is_completed: this.is_completed,
             due_date: this.date,
-            comments: this.comments.join(),
-            description: this.description,
-            tags: this.tags.join(),
+            comments: this.comments.length > 0 ? this.comments.join() : null,
+            description: this.description ? this.description : null,
+            tags: this.tags.length > 0 ? this.tags.join() : null,
           };
-
           try {
             const response = await service.postTask(taskObj);
             if (response.data.detail === "Éxito al crear la tarea") {
@@ -285,9 +326,9 @@ export default {
           title: this.title,
           is_completed: this.is_completed,
           due_date: this.date,
-          comments: this.comments.join(),
-          description: this.description,
-          tags: this.tags.join(),
+          comments: this.comments.length > 0 ? this.comments.join() : null,
+          description: this.description ? this.description : null,
+          tags: this.tags.length > 0 ? this.tags.join() : null,
         };
         try {
           const response = await service.updateTask(taskObj);
@@ -349,6 +390,27 @@ export default {
       }
     },
 
+    async deleteTask() {
+      if (this.id) {
+        try {
+          const response = await service.deleteTask(this.id);
+          if (response.data.detail === "Éxito al eliminar la tarea") {
+            this.tasks = this.$store.state.tasks;
+            this.tasks[0].map((e, i) => {
+              if (e.id === this.id) {
+                this.tasks[0].splice(i, 1);
+              }
+            });
+            this.$store.dispatch("addTasks", this.tasks);
+          }
+        } catch (error) {
+          this.alert = true;
+          this.msg = "Ocurrió un error " + error;
+          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+        }
+      }
+    },
+
     addComment() {
       if (this.comment) {
         this.comments.push(this.comment);
@@ -397,5 +459,10 @@ export default {
   background-color: rgba(3, 7, 15, 0.486);
   border-radius: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.btn-dialog {
+  width: 100%;
+  height: 100%;
 }
 </style>
