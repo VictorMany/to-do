@@ -235,7 +235,7 @@ export default {
   updated() {
     //Calling function to consult the detail of a single task
     if (this.dialog == true) {
-      this.getTask();
+      //this.getTask();
       this.tasks = this.$store.state.tasks;
     }
     //Close dialog and execute the resetForm function
@@ -243,6 +243,10 @@ export default {
       this.editMode = false;
       //wait one second after close form
       setTimeout(() => this.resetForm(), 100);
+    }
+    //seting the editMode of the form
+    if (this.icon === "mdi-plus-circle") {
+      this.editMode = true;
     }
   },
 
@@ -293,6 +297,8 @@ export default {
       this.comments = [];
       this.description = "";
       this.tags = [];
+      this.tag = "";
+      this.comment = "";
     },
 
     /**
@@ -316,6 +322,7 @@ export default {
             description: this.description ? this.description : null,
             tags: this.tags.length > 0 ? this.tags.join() : null,
           };
+
           try {
             const response = await service.postTask(taskObj);
             //Checking if the response is success
@@ -346,10 +353,11 @@ export default {
           title: this.title,
           is_completed: this.is_completed,
           due_date: this.date,
-          comments: this.comments.length > 0 ? this.comments.join() : null,
+          comments: this.comments.length > 0 ? this.comments.join() : "",
           description: this.description ? this.description : null,
-          tags: this.tags.length > 0 ? this.tags.join() : null,
+          tags: this.tags.length > 0 ? this.tags.join() : "",
         };
+
         try {
           const response = await service.updateTask(taskObj);
           //Checking if the response is success
