@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" max-width="600">
     <template v-slot:activator="{ on, attrs }">
-      <div class="btn-dialog" @click="dialog = true" v-if="opened"></div>
+      <div class="btn-dialog" @click="getTask()" v-if="opened"></div>
       <v-btn
         v-if="icon == 'mdi-plus-circle'"
         color="blue-grey"
@@ -240,8 +240,9 @@ export default {
     }
     //Close dialog and execute the resetForm function
     if (this.dialog == false) {
-      this.resetForm();
       this.editMode = false;
+      //wait one second after close form
+      setTimeout(() => this.resetForm(), 100);
     }
   },
 
@@ -410,6 +411,7 @@ export default {
           this.msg = "An error has ocurred " + error;
           setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
         }
+        this.dialog = true;
       }
     },
 
