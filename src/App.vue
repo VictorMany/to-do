@@ -1,8 +1,8 @@
 <template>
-  <v-app>
+  <v-app class="main-container-app">
     <app-bar />
     <v-main class="body-style">
-      <home msg="Welcome" />
+      <home msg="Bienvenido" />
     </v-main>
   </v-app>
 </template>
@@ -27,7 +27,7 @@ export default {
 
 .body-style {
   background-color: #0d1117;
-  height: 100%;
+  height: 90vh;
   width: 100%;
 }
 
@@ -52,6 +52,10 @@ p {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.main-container-app {
+  height: 100vh !important;
 }
 </style>
 

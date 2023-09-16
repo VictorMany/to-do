@@ -1,29 +1,16 @@
 <template>
-  <div class="col-12 col-sm-6 col-md-6 div-parents">
-    <v-card class="card-style div-parents" color="#0F477C11">
-      <v-card-title class="pb-0 mb-0">
-        <v-row class="justify-space-between">
-          <v-col class="pt-0 ps-2 pb-0 font-weight-light">
+    <v-card class="card-style" height="100%">
+      <v-card-title>
+        <v-row class="justify-space-between" no-gutters>
+          <v-col class="font-weight-light">
             <p>{{ title }}</p>
           </v-col>
-          <v-chip
-            small
-            class="float-right mt-2 me-2 pe-1 ps-2"
-            :color="is_completed.toString() == '1' ? '#02C77B' : 'yellow'"
-            outlined
-            >{{ is_completed.toString() == "1" ? "Completed" : "Pending" }}
-            <v-icon
-              v-if="is_completed.toString() != '0'"
-              small
-              class="ms-2"
-              :color="is_completed.toString() == '1' ? '#02C77B' : 'yellow'"
-            >
-              mdi-check-circle
-            </v-icon>
-          </v-chip>
+          <v-col cols="12" class="font-weight-light px10">
+            {{ details }}
+          </v-col>
         </v-row>
       </v-card-title>
-      <div
+      <!-- <div
         v-if="due_date"
         class="text--secondary text-start ps-3 pb-2 font-weight-thin date-style"
       >
@@ -33,15 +20,14 @@
         <v-col cols="12" class="detail-style">
           <Form :id="id" :opened="true" />
         </v-col>
-      </v-overlay>
+      </v-overlay> -->
     </v-card>
-  </div>
 </template>
 
 <script>
-import Form from "./Form.vue";
+// import Form from "./Form.vue";
 export default {
-  components: { Form },
+  // components: { Form },
   name: "Card",
 
   data: () => ({
@@ -54,13 +40,12 @@ export default {
 
   props: {
     //Title propis required
-    id: { type: Number, required: true },
+    id: { type: String, required: true },
+    details: { type: String, required: true },
     //Title propis required
     title: { type: String, required: true },
     //Completed prop is required
-    is_completed: { required: true },
     //The rest of the props are optionals
-    due_date: String,
   },
 };
 </script>
@@ -70,16 +55,10 @@ export default {
 .card-style {
   border-width: thin;
   border-style: solid;
-  border-color: rgba(255, 255, 255, 0.226) !important;
-  flex-grow: 1;
-  margin: 0.5rem;
-}
+  border-radius: 12px;
 
-// allow full height for content child
-.div-parents {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
+  background: rgba(31, 31, 40, 0.709);
+  backdrop-filter: blur(2px);
 }
 
 // the date typografy
@@ -96,5 +75,11 @@ export default {
 // allows to hide the overflow child content
 .div-overlay {
   overflow: hidden;
+}
+
+.px10 {
+  font-size: 12px;
+  word-break: normal;
+  line-height: 16px;
 }
 </style>

@@ -1,12 +1,14 @@
 <template>
   <div class="home-cont-style">
     <!--The message welcome-->
-    <h1 class="styleh1">{{ msg }}</h1>
-    <v-row class="mb-2">
-      <v-col cols="12" md="6" class="ps-5 pe-5"
-        ><v-text-field
+    <v-row class="pa-0 ma-0">
+      <v-col cols="12">
+        <h1 class="styleh1">{{ msg }}</h1>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field
           v-model="search"
-          label="Type task title"
+          label="Buscar nota"
           dark
           @input="setSearch()"
           dense
@@ -15,10 +17,12 @@
           hide-details
           clearable
           clear-icon="mdi-close-circle-outline"
-        ></v-text-field
-      ></v-col>
+        />
+      </v-col>
+      <v-col cols="12">
+        <list />
+      </v-col>
     </v-row>
-    <list />
   </div>
 </template>
 
@@ -83,8 +87,9 @@ export default {
 <style  lang="scss" scoped>
 //set typography to H1
 .styleh1 {
-  color: #42b983;
-  margin: 1rem;
+  color: #50fa7b;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
 
 /* Style DESKTOP screen */

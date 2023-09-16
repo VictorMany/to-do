@@ -1,23 +1,25 @@
 <template>
-  <div>
-    <v-row no-gutters>
+  <v-row class="pa-0 ma-0">
+    <v-col
+      cols="12"
+      md="6"
+      lg="4"
+      v-for="t in TASKS"
+      :key="t._id"
+    >
       <card
-        v-for="t in TASKS"
-        :key="t.id"
-        :id="t.id"
+        :id="t._id"
         :title="t.title"
         :is_completed="t.is_completed"
-        :comments="t.comments"
-        :description="t.description"
+        :details="t.details"
         :due_date="t.due_date"
-        :tags="t.tags"
       />
-    </v-row>
-    <!--Rendering other component for no tasks-->
-    <div v-if="display">
-      <h4 class="text-center">No tasks !</h4>
-    </div>
-  </div>
+      <!--Rendering other component for no tasks-->
+      <div v-if="display">
+        <h4 class="text-center">No tasks !</h4>
+      </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -52,8 +54,9 @@ export default {
     async getAllTasks() {
       try {
         const response = await service.getTasks();
-        if (response.data) {
-          this.tasks = response.data;
+        console.log("LA DATA", response);
+        if (response) {
+          this.tasks = response;
           this.$store.dispatch("addTasks", this.tasks);
         }
       } catch (error) {

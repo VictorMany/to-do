@@ -67,7 +67,7 @@
           <v-form v-model="valid">
             <v-container>
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="6" class="red">
                   <v-text-field
                     v-model="title"
                     :rules="titleRules"
@@ -108,83 +108,16 @@
                   </v-menu>
                 </v-col>
 
-                <v-col cols="12" class="pb-0">
+                <v-col cols="12" class="pb-0 pink">
                   <v-textarea
                     outlined
                     :readonly="!editMode"
                     height="100"
                     name="input-7-4"
-                    label="Task description"
-                    :value="description"
-                    v-model="description"
+                    label="Task details"
+                    :value="details"
+                    v-model="details"
                   ></v-textarea>
-                </v-col>
-
-                <v-col cols="12" class="section-style pa-5">
-                  <h3 class="pb-2">Comments</h3>
-                  <v-row class="py-1">
-                    <v-chip
-                      class="ma-4 pe-2"
-                      color="info"
-                      v-for="(c, i) in comments"
-                      :key="i"
-                    >
-                      {{ c }}
-                      <v-icon
-                        v-if="editMode"
-                        class="float-right ms-1"
-                        @click="removeComment(i)"
-                        >mdi-close-circle</v-icon
-                      >
-                    </v-chip>
-                  </v-row>
-
-                  <v-text-field
-                    v-if="editMode"
-                    v-model="comment"
-                    label="Comment"
-                  >
-                    <v-icon slot="prepend"> mdi-comment </v-icon>
-                  </v-text-field>
-                  <v-card-text v-if="editMode" class="text-center">
-                    <v-divider class="mx-4" vertical></v-divider>
-                    <v-btn small outlined color="info" @click="addComment()">
-                      Add comment
-                    </v-btn>
-                  </v-card-text>
-                </v-col>
-
-                <v-col cols="12" class="section-style pa-5">
-                  <h3 class="pb-5">Tags</h3>
-                  <v-row>
-                    <v-chip
-                      class="ma-4 pe-2"
-                      color="info"
-                      small
-                      v-for="(t, i) in tags"
-                      :key="i"
-                    >
-                      {{ t }}
-
-                      <v-icon
-                        small
-                        class="float-right ms-1"
-                        @click="removeTag(i)"
-                        v-if="editMode"
-                        >mdi-close-circle</v-icon
-                      >
-                    </v-chip>
-                  </v-row>
-
-                  <v-text-field v-if="editMode" v-model="tag" label="Tag">
-                    <v-icon slot="prepend"> mdi-tag </v-icon>
-                  </v-text-field>
-                  <v-card-text v-if="editMode" class="text-center">
-                    <v-divider class="mx-4" vertical></v-divider>
-                    <v-btn small outlined color="info" @click="addTag()">
-                      Add tag
-                    </v-btn>
-                  </v-card-text>
                 </v-col>
               </v-row>
             </v-container>
@@ -192,9 +125,9 @@
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn text @click="addNewTask()">{{
-            id ? "UPDATE" : "PUBLISH"
+            id ? "Actualizar" : "Guardar"
           }}</v-btn>
-          <v-btn text @click="dialog.value = false">Close</v-btn>
+          <v-btn text @click="dialog.value = false">Cerrar</v-btn>
         </v-card-actions>
         <div class="alert">
           <v-alert border="bottom" dark v-model="alert" color="warning">
@@ -262,7 +195,7 @@ export default {
     msg: "",
     title: "",
     is_completed: 0,
-    description: "",
+    details: "",
     comment: "",
     tag: "",
     titleRules: [(v) => !!v || "Title is required"],
@@ -295,7 +228,7 @@ export default {
       this.title = "";
       this.is_completed = 0;
       this.comments = [];
-      this.description = "";
+      this.details = "";
       this.tags = [];
       this.tag = "";
       this.comment = "";
@@ -318,9 +251,7 @@ export default {
             title: this.title,
             is_completed: this.is_completed,
             due_date: this.date,
-            comments: this.comments.length > 0 ? this.comments.join() : null,
-            description: this.description ? this.description : null,
-            tags: this.tags.length > 0 ? this.tags.join() : null,
+            details: this.details ? this.details : null,
           };
 
           try {
@@ -354,7 +285,7 @@ export default {
           is_completed: this.is_completed,
           due_date: this.date,
           comments: this.comments.length > 0 ? this.comments.join() : "",
-          description: this.description ? this.description : null,
+          details: this.details ? this.details : null,
           tags: this.tags.length > 0 ? this.tags.join() : "",
         };
 
@@ -410,7 +341,7 @@ export default {
               }
             }
             this.title = data.title;
-            this.description = data.description;
+            this.details = data.details;
             this.is_completed = data.is_completed;
             this.date = data.due_date;
           }
