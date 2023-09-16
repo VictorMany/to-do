@@ -22,6 +22,7 @@ export default class service {
             throw error; // Opcionalmente, puedes lanzar el error para que se maneje en otro lugar
         }
     }
+    
     //Ge task by ID
     static getTask(id) {
         const params = new URLSearchParams()
