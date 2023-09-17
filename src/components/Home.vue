@@ -8,11 +8,11 @@
           <Form icon="mdi-plus-circle" />
         </v-row>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="pt-0">
         <v-text-field
           v-model="search"
-          label="Buscar nota"
-          dark
+          style="border-radius: 8px; font-size: 12px !important"
+          label="Buscar notas"
           @input="setSearch()"
           dense
           flat
@@ -22,7 +22,11 @@
           clear-icon="mdi-close-circle-outline"
         />
       </v-col>
-      <v-col cols="12" class="pt-0 px-0" style="height: 85vh !important; overflow: scroll">
+      <v-col
+        cols="12"
+        class="pt-0 px-0"
+        style="height: 85vh !important; overflow: scroll"
+      >
         <list />
       </v-col>
     </v-row>
@@ -91,7 +95,7 @@ export default {
 <style  lang="scss" scoped>
 //set typography to H1
 .styleh1 {
-  color: #50fa7b;
+  color: #29D697;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
 }
@@ -105,5 +109,6 @@ export default {
 
 .home-cont-style {
   position: fixed;
+  width: 100vw;
 }
 </style>

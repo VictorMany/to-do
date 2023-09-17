@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" max-width="600">
     <template v-slot:activator="{ on, attrs }">
       <div class="btn-dialog" @click="getTask()" v-if="opened"></div>
-      <v-btn
+      <!-- <v-btn
         v-if="icon == 'mdi-plus-circle'"
         color="blue-grey"
         class="ma-2 white--text pe-1 ps-1"
@@ -16,7 +16,30 @@
           Add new
         </div>
         <v-icon color="white" class="pa-1">{{ icon }}</v-icon></v-btn
-      >
+      > -->
+
+      <v-fab-transition>
+        <v-btn
+          v-bind="attrs"
+          v-on="on"
+          color="#F59762"
+          style="
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            border-radius: 12px;
+            box-shadow: 10px 10px 25px 10px rgba(0, 0, 0, 0.1);
+          "
+          width="47"
+          height="47"
+          fab
+          absolute
+          bottom
+          right
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </v-fab-transition>
     </template>
     <template v-slot:default="dialog">
       <v-card>
@@ -239,7 +262,6 @@ export default {
      * @title allows to know if the variable title is not null
      * the array variables are turned into string variables
      */
-
     //Add new task
     async addNewTask() {
       if (this.id) {

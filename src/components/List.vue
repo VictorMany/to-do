@@ -1,6 +1,13 @@
 <template>
-  <v-row class="pa-0 ma-0">
-    <v-col cols="12" md="6" lg="4" v-for="t in TASK_COMPUTED" :key="t._id">
+  <v-row class="pa-2 ma-0">
+    <v-col
+      cols="6"
+      md="4"
+      lg="3"
+      class="pa-1"
+      v-for="t in TASK_COMPUTED"
+      :key="t._id"
+    >
       <card
         :id="t._id"
         :title="t.title"

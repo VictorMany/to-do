@@ -1,16 +1,19 @@
 <template>
-    <v-card class="card-style" height="100%">
-      <v-card-title>
-        <v-row class="justify-space-between" no-gutters>
-          <v-col class="font-weight-light">
-            <p>{{ title }}</p>
-          </v-col>
-          <v-col cols="12" class="font-weight-light px10">
-            {{ details }}
-          </v-col>
-        </v-row>
-      </v-card-title>
-      <!-- <div
+  <v-card class="card-style d-flex flex-column" height="100%">
+    <v-card-title class="font-weight-light px13 pb-2">
+      {{ title }}
+    </v-card-title>
+    <v-card-text class="font-weight-light px12">
+      {{ details }}
+    </v-card-text>
+    <v-card-actions v-if="due_date" class="font-weight-light px12 mt-auto">
+      <v-row class="pa-0 ma-0">
+        <v-col cols="auto ms-auto pt-0 pb-1 date-style">
+          {{ getCurrentDate(due_date) }}
+        </v-col>
+      </v-row>
+    </v-card-actions>
+    <!-- <div
         v-if="due_date"
         class="text--secondary text-start ps-3 pb-2 font-weight-thin date-style"
       >
@@ -21,7 +24,7 @@
           <Form :id="id" :opened="true" />
         </v-col>
       </v-overlay> -->
-    </v-card>
+  </v-card>
 </template>
 
 <script>
@@ -44,8 +47,19 @@ export default {
     details: { type: String, required: true },
     //Title propis required
     title: { type: String, required: true },
+    due_date: { type: String, required: false },
     //Completed prop is required
     //The rest of the props are optionals
+  },
+
+  methods: {
+    getCurrentDate(dueDate) {
+      const fechaOriginal = new Date(dueDate);
+      // Suma un día a la fecha original
+      fechaOriginal.setDate(fechaOriginal.getDate() + 1);
+
+      return new Date(fechaOriginal).toDateString();
+    },
   },
 };
 </script>
@@ -77,9 +91,19 @@ export default {
   overflow: hidden;
 }
 
-.px10 {
+.px12 {
   font-size: 12px;
   word-break: normal;
   line-height: 16px;
+}
+
+.px13 {
+  font-size: 13px;
+  word-break: normal;
+  line-height: 16px;
+}
+
+.date-style {
+  color: rgb(191, 191, 191);
 }
 </style>
