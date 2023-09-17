@@ -22,11 +22,7 @@
           clear-icon="mdi-close-circle-outline"
         />
       </v-col>
-      <v-col
-        cols="12"
-        class="pt-0 px-0"
-        style="height: 85vh !important; overflow: scroll"
-      >
+      <v-col cols="12" class="pt-0 px-0 container-cards">
         <list />
       </v-col>
     </v-row>
@@ -95,7 +91,7 @@ export default {
 <style  lang="scss" scoped>
 //set typography to H1
 .styleh1 {
-  color: #29D697;
+  color: #29d697;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
 }
@@ -110,5 +106,18 @@ export default {
 .home-cont-style {
   position: fixed;
   width: 100vw;
+}
+
+.container-cards {
+  height: 85vh !important;
+  overflow: scroll;
+}
+
+/* Style DESKTOP screen */
+@media all and (max-height: 701px) {
+  .container-cards {
+    height: 75vh !important;
+    overflow: scroll;
+  }
 }
 </style>
