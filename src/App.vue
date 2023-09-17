@@ -23,6 +23,7 @@ export default {
 * GLOBAL STYLES
 */
 
+
 .body-style {
   background-color: #0d1117;
   height: 90vh;
@@ -59,6 +60,10 @@ p {
 .main-container-app-bar {
   top: 0;
   position: fixed;
+}
+
+.v-text-field {
+  font-size: 15px;
 }
 </style>
 

@@ -91,7 +91,7 @@ export default {
 <style  lang="scss" scoped>
 //set typography to H1
 .styleh1 {
-  color: #29d697;
+  color: #30ffb3;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
 }

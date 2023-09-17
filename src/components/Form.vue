@@ -1,27 +1,12 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600">
+  <v-dialog v-model="OPEN_EDIT" max-width="600">
     <template v-slot:activator="{ on, attrs }">
-      <div class="btn-dialog" @click="getTask()" v-if="opened"></div>
-      <!-- <v-btn
-        v-if="icon == 'mdi-plus-circle'"
-        color="blue-grey"
-        class="ma-2 white--text pe-1 ps-1"
-        outlined
-        v-bind="attrs"
-        v-on="on"
-      >
-        <div
-          class="d-none d-md-flex d-lg-none text-center float-center font-weight-light white--text"
-        >
-          Add new
-        </div>
-        <v-icon color="white" class="pa-1">{{ icon }}</v-icon></v-btn
-      > -->
-
+      <!-- <div class="btn-dialog" @click="getTask()" v-if="opened"></div> -->
       <v-fab-transition>
         <v-btn
           v-bind="attrs"
           v-on="on"
+          @click="resetForm"
           color="#F59762"
           style="
             bottom: 30px;
@@ -41,62 +26,74 @@
         </v-btn>
       </v-fab-transition>
     </template>
-    <template v-slot:default="dialog">
-      <v-card>
+    <template v-slot:default="OPEN_EDIT">
+      <v-card style="border-radius: 8px" class="form-card">
         <v-toolbar color="rgba(3, 7, 15, 0.486)">
-          <v-chip
-            v-if="opened"
-            color="blue"
-            outlined
-            class="white--text ms-2"
-            small
-            @click="deleteTask()"
-          >
-            <v-icon small>mdi-trash-can</v-icon>
-          </v-chip>
-          <v-chip
-            v-if="opened"
-            color="blue"
-            :outlined="!editMode"
-            class="white--text ms-2"
-            small
-            @click="editMode = !editMode"
-          >
-            <v-icon small>mdi-pencil</v-icon>
-          </v-chip>
-          <v-chip
-            @click="
-              is_completed.toString() == '0' && id
-                ? (is_completed = 1)
-                : (is_completed = 0)
-            "
-            small
-            class="float-right ms-auto pe-2 ps-2"
-            :class="
-              is_completed.toString() == 1 ? 'white--text' : 'black--text'
-            "
-            :color="is_completed.toString() == 1 ? '#02C77B' : '#FFFB07'"
-            >{{ is_completed.toString() == 1 ? "Completed" : "Pending" }}
-            <v-icon v-if="is_completed" class="ms-2"> mdi-check-circle </v-icon>
-          </v-chip>
+          <v-row no-gutters justify="end">
+            <v-chip
+              v-if="editMode"
+              color="error"
+              class="white--text ms-auto px-2"
+              small
+              @click="deleteTask()"
+            >
+              <v-icon small>mdi-trash-can-outline</v-icon>
+            </v-chip>
+            <v-chip
+              small
+              style="border-radius: 8px"
+              class="float-right ms-2 pe-2 ps-2"
+              :class="is_completed == 1 ? 'white--text' : 'black--text'"
+              :color="is_completed == 1 ? '#02C77B' : '#FFFB07'"
+              >{{ is_completed == 1 ? "Completada" : "Pendiente" }}
+              <v-icon small class="ps-1">
+                {{
+                  is_completed == 1
+                    ? "mdi-check-circle-outline"
+                    : "mdi-dots-horizontal-circle-outline"
+                }}</v-icon
+              >
+            </v-chip>
+          </v-row>
         </v-toolbar>
-        <v-card-text class="pa-1">
+        <v-card-text class="pa-1 form-card">
           <v-form v-model="valid">
             <v-container>
-              <v-row>
-                <v-col cols="12" md="6">
+              <v-row no-gutters>
+                <v-col cols="12" class="pb-0">
                   <v-text-field
                     v-model="title"
                     :rules="titleRules"
-                    label="Title"
+                    label="Nota"
+                    class="border-rounded"
+                    dense
+                    solo
+                    background-color="rgba(31, 31, 40)"
                     required
-                    :readonly="!editMode"
                   >
-                    <v-icon slot="prepend">mdi-format-title</v-icon>
+                    <v-icon slot="prepend-inner"
+                      >mdi-notebook-edit-outline</v-icon
+                    >
                   </v-text-field>
                 </v-col>
 
-                <v-col cols="12" md="6">
+                <v-col cols="12" class="py-0">
+                  <v-textarea
+                    height="auto"
+                    class="border-rounded"
+                    dense
+                    placeholder="Detalles de la nota"
+                    solo
+                    background-color="rgba(31, 31, 40)"
+                    :value="details"
+                    v-model="details"
+                  ></v-textarea>
+                </v-col>
+
+                <v-col cols="12" class="py-0">
+                  <div>Fecha límite</div>
+                </v-col>
+                <v-col cols="12" class="py-0">
                   <v-menu
                     v-model="menu2"
                     :close-on-content-click="false"
@@ -109,42 +106,36 @@
                       <v-text-field
                         v-model="computedDateFormatted"
                         persistent-hint
-                        prepend-icon="mdi-calendar"
+                        prepend-inner-icon="mdi-calendar"
                         readonly
+                        class="border-rounded"
+                        dense
+                        solo
+                        background-color="rgba(31, 31, 40)"
                         v-bind="attrs"
                         v-on="on"
                       ></v-text-field>
                     </template>
                     <v-date-picker
                       color="info"
-                      :readonly="!editMode"
                       v-model="date"
+                      class="border-rounded"
                       no-title
                       @input="menu2 = false"
                     ></v-date-picker>
                   </v-menu>
                 </v-col>
-
-                <v-col cols="12" class="pb-0">
-                  <v-textarea
-                    outlined
-                    :readonly="!editMode"
-                    height="100"
-                    name="input-7-4"
-                    label="Task details"
-                    :value="details"
-                    v-model="details"
-                  ></v-textarea>
-                </v-col>
               </v-row>
             </v-container>
           </v-form>
         </v-card-text>
-        <v-card-actions class="justify-end">
-          <v-btn text @click="addNewTask()">{{
-            id ? "Actualizar" : "Guardar"
+        <v-card-actions class="justify-end black">
+          <v-btn class="text-capitalize" text @click="OPEN_EDIT.value = false"
+            >Cancelar</v-btn
+          >
+          <v-btn text @click="addNewTask()" class="text-capitalize">{{
+            editMode ? "Actualizar" : "Guardar"
           }}</v-btn>
-          <v-btn text @click="dialog.value = false">Cerrar</v-btn>
         </v-card-actions>
         <v-snackbar v-model="alert" :timeout="timeout" shaped elevation="24">
           {{ msg }}
@@ -210,6 +201,7 @@ export default {
     msg: "",
     title: "",
     is_completed: 0,
+    _id: null,
     details: "",
     comment: "",
     tag: "",
@@ -237,11 +229,39 @@ export default {
         return this.$store.state.tasks;
       },
     },
+
+    OPEN_EDIT: {
+      get() {
+        return this.$store.state.openEdit;
+      },
+      set(val) {
+        this.$store.dispatch("openEdit", val);
+      },
+    },
   },
 
   watch: {
-    date() {
-      this.dateFormatted = this.formatDate(this.date);
+    date(val) {
+      console.log(val);
+      this.dateFormatted = this.formatDate(val);
+    },
+    OPEN_EDIT: {
+      handler(val) {
+        if (val._id) {
+          console.log("vamos a editar", val);
+
+          this._id = val._id
+          this.title = val.title;
+          this.details = val.details;
+          this.is_completed = val.is_completed;
+
+          if (val.due_date)
+            this.date = new Date(val.due_date).toISOString().slice(0, 10);
+
+          this.editMode = true;
+        }
+      },
+      deep: true,
     },
   },
 
@@ -250,21 +270,12 @@ export default {
     resetForm() {
       this.title = "";
       this.is_completed = 0;
-      this.comments = [];
       this.details = "";
-      this.tags = [];
-      this.tag = "";
-      this.comment = "";
+      this.editMode = false;
     },
 
-    /**
-     * @id checks if is a new task or is editing one
-     * @title allows to know if the variable title is not null
-     * the array variables are turned into string variables
-     */
-    //Add new task
     async addNewTask() {
-      if (this.id) {
+      if (this.editMode) {
         //if is an edit task
         this.updateTask();
       } else {
@@ -310,35 +321,36 @@ export default {
     async updateTask() {
       if (this.title !== "") {
         let taskObj = {
-          id: this.id,
+          _id: this._id,
           title: this.title,
-          is_completed: this.is_completed,
+          is_completed: this.is_completed ? this.is_completed : 0,
           due_date: this.date,
-          comments: this.comments.length > 0 ? this.comments.join() : "",
           details: this.details ? this.details : null,
-          tags: this.tags.length > 0 ? this.tags.join() : "",
         };
+
+        console.log("Trataando de editar", taskObj)
 
         try {
           const response = await service.updateTask(taskObj);
           //Checking if the response is success
-          if (response.data.detail === "Éxito al actualizar la tarea") {
-            this.tasks[0].map((e, i) => {
-              if (e.id == this.id) {
-                this.tasks[0][i] = {
-                  ...this.tasks[0][i],
-                  ...response.data.task,
-                };
-              }
-            });
+          if (response.success) {
             //updating the state
-            this.$store.dispatch("addTasks", this.tasks);
-            this.dialog = false;
+            this.$store.dispatch("addOneTask", response.data);
+
+            this.alert = true;
+            this.msg = "La nota se agregó";
+            setTimeout(() => {
+              this.alert = false;
+              this.msg = "";
+            }, 2000);
           }
         } catch (error) {
           this.alert = true;
           this.msg = "An error has ocurred " + error;
-          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+          setTimeout(() => {
+            this.alert = false;
+            this.msg = "";
+          }, 2000);
         }
       } else {
         this.alert = true;
@@ -347,42 +359,42 @@ export default {
       }
     },
 
-    //Get the complete detail of a task
-    async getTask() {
-      if (this.id) {
-        try {
-          const response = await service.getTask(this.id);
-          let data = response.data[0];
-          if (response.data[0]) {
-            //Turning the tags into array variable
-            if (data.tags) {
-              if (data.tags.includes(",")) {
-                this.tags = data.tags.split(",");
-              } else {
-                this.tags.push(data.tags);
-              }
-            }
-            //Turning the tags into array variable
-            if (data.comments) {
-              if (data.comments.includes(",")) {
-                this.comments = data.comments.split(",");
-              } else {
-                this.comments.push(data.comments);
-              }
-            }
-            this.title = data.title;
-            this.details = data.details;
-            this.is_completed = data.is_completed;
-            this.date = data.due_date;
-          }
-        } catch (error) {
-          this.alert = true;
-          this.msg = "An error has ocurred " + error;
-          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
-        }
-        this.dialog = true;
-      }
-    },
+    // //Get the complete detail of a task
+    // async getTask() {
+    //   if (this.id) {
+    //     try {
+    //       const response = await service.getTask(this.id);
+    //       let data = response.data[0];
+    //       if (response.data[0]) {
+    //         //Turning the tags into array variable
+    //         if (data.tags) {
+    //           if (data.tags.includes(",")) {
+    //             this.tags = data.tags.split(",");
+    //           } else {
+    //             this.tags.push(data.tags);
+    //           }
+    //         }
+    //         //Turning the tags into array variable
+    //         if (data.comments) {
+    //           if (data.comments.includes(",")) {
+    //             this.comments = data.comments.split(",");
+    //           } else {
+    //             this.comments.push(data.comments);
+    //           }
+    //         }
+    //         this.title = data.title;
+    //         this.details = data.details;
+    //         this.is_completed = data.is_completed;
+    //         this.date = data.due_date;
+    //       }
+    //     } catch (error) {
+    //       this.alert = true;
+    //       this.msg = "An error has ocurred " + error;
+    //       setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+    //     }
+    //     this.OPEN_EDIT = true;
+    //   }
+    // },
 
     //Delete a task by id
     async deleteTask() {
@@ -466,5 +478,10 @@ export default {
 .btn-dialog {
   width: 100%;
   height: 100%;
+}
+
+.form-card {
+  background: #0000004a;
+  backdrop-filter: blur(2px);
 }
 </style>

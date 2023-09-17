@@ -7,7 +7,8 @@ export default new Vuex.Store({
     //state vars for tasks and aux tasks
     state: {
         tasks: [],
-        auxTasks: []
+        auxTasks: [],
+        openEdit: false
     },
     //mutations for array tasks state
     mutations: {
@@ -19,7 +20,10 @@ export default new Vuex.Store({
         },
         UPDATE_AUXTASKS(state, payload) {
             state.auxTasks = payload;
-        }
+        },
+        OPEN_EDIT(state, payload) {
+            state.openEdit = payload;
+        },
     },
     //Actions that call my mutations (I can call this actions from anywhere inside the project)
     actions: {
@@ -34,6 +38,10 @@ export default new Vuex.Store({
         searchTasks(context, payload) {
             let tasks = [payload]
             context.commit('UPDATE_TASKS', tasks)
+        },
+
+        openEdit(context, payload) {
+            context.commit('OPEN_EDIT', payload)
         }
     }
 })

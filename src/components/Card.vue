@@ -1,6 +1,6 @@
 <template>
   <v-card class="card-style d-flex flex-column" height="100%">
-    <v-card-title class="font-weight-light px13 pb-2">
+    <v-card-title class="font-weight-normal px13 pb-2">
       {{ title }}
     </v-card-title>
     <v-card-text class="font-weight-light px12">
@@ -59,7 +59,7 @@ export default {
       fechaOriginal.setDate(fechaOriginal.getDate() + 1);
 
       return new Date(fechaOriginal).toDateString();
-    },
+    }
   },
 };
 </script>
@@ -70,6 +70,7 @@ export default {
   border-width: thin;
   border-style: solid;
   border-radius: 12px;
+  cursor: pointer; user-select: none;
 
   background: rgba(31, 31, 40, 0.709);
   backdrop-filter: blur(2px);

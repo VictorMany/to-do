@@ -7,7 +7,7 @@ const bearer = 'e864a0c9eda63181d7d65bc73e61e3dc6b74ef9b82f7049f1fc7d9fc8f297060
 
 
 export default class service {
-    static endpoint = "https://api-notes-one.vercel.app/api/posts";
+    static endpoint = "http://localhost:3000/api/posts";
     //Get all the tasks
     // Método para obtener todas las tareas
     static async getTasks() {
@@ -41,15 +41,6 @@ export default class service {
 
     static async postTask(post) {
         try {
-            const params = new URLSearchParams()
-            // Enviar 'post' en el cuerpo de la solicitud POST
-            for (let property in post) {
-                var encodedKey = encodeURIComponent(property);
-                if (post[property] != null) {
-                    params.append(encodedKey, post[property]);
-                }
-            }
-    
             const response = await axios.post(
                 `${service.endpoint}`,
                 post,
@@ -73,27 +64,27 @@ export default class service {
     
     
     //Update task by ID
-    static updateTask(post) {
-        const params = new URLSearchParams()
-        params.append('token', token)
-
-        for (let property in post) {
-            var encodedKey = encodeURIComponent(property);
-            if (post[property] != null) {
-                params.append(encodedKey, post[property]);
-            }
-        }
-
-        return axios.put(
-            `${service.endpoint}/${post.id}`,
-            params,
-            {
-                headers: {
-                    'Authorization': `Bearer ${bearer}`,
-                    'Content-Type': 'application/x-www-form-urlencoded'
+    static async updateTask(post) {
+        try {
+            const response = await axios.put(
+                `${service.endpoint}`,
+                post,
+                {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
                 }
-            }
-        );
+            );
+    
+            // Manejar la respuesta aquí
+            console.log('Respuesta del servidor:', response.data);
+    
+            return response.data; // Devuelve los datos de la respuesta
+        } catch (error) {
+            // Manejar errores aquí
+            console.error('Error al realizar la solicitud POST:', error);
+            throw error; // Opcionalmente, puedes lanzar el error para que se maneje en otro lugar
+        }
     }
     //Delete task by ID
     static deleteTask(id) {
