@@ -7,7 +7,7 @@ const bearer = 'e864a0c9eda63181d7d65bc73e61e3dc6b74ef9b82f7049f1fc7d9fc8f297060
 
 
 export default class service {
-    static endpoint = "http://localhost:3000/api/posts";
+    static endpoint = "https://api-notes-one.vercel.app/api/posts";
     //Get all the tasks
     // Método para obtener todas las tareas
     static async getTasks() {
