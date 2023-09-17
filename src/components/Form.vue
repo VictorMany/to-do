@@ -11,13 +11,7 @@
         v-on="on"
       >
         <div
-          class="
-            d-none d-md-flex d-lg-none
-            text-center
-            float-center
-            font-weight-light
-            white--text
-          "
+          class="d-none d-md-flex d-lg-none text-center float-center font-weight-light white--text"
         >
           Add new
         </div>
@@ -67,7 +61,7 @@
           <v-form v-model="valid">
             <v-container>
               <v-row>
-                <v-col cols="12" md="6" class="red">
+                <v-col cols="12" md="6">
                   <v-text-field
                     v-model="title"
                     :rules="titleRules"
@@ -108,7 +102,7 @@
                   </v-menu>
                 </v-col>
 
-                <v-col cols="12" class="pb-0 pink">
+                <v-col cols="12" class="pb-0">
                   <v-textarea
                     outlined
                     :readonly="!editMode"
@@ -129,11 +123,9 @@
           }}</v-btn>
           <v-btn text @click="dialog.value = false">Cerrar</v-btn>
         </v-card-actions>
-        <div class="alert">
-          <v-alert border="bottom" dark v-model="alert" color="warning">
-            {{ msg }}
-          </v-alert>
-        </div>
+        <v-snackbar v-model="alert" :timeout="timeout" shaped elevation="24">
+          {{ msg }}
+        </v-snackbar>
       </v-card>
     </template>
   </v-dialog>
@@ -165,23 +157,23 @@ export default {
     }
   },
 
-  updated() {
-    //Calling function to consult the detail of a single task
-    if (this.dialog == true) {
-      //this.getTask();
-      this.tasks = this.$store.state.tasks;
-    }
-    //Close dialog and execute the resetForm function
-    if (this.dialog == false) {
-      this.editMode = false;
-      //wait one second after close form
-      setTimeout(() => this.resetForm(), 100);
-    }
-    //seting the editMode of the form
-    if (this.icon === "mdi-plus-circle") {
-      this.editMode = true;
-    }
-  },
+  // updated() {
+  //   //Calling function to consult the detail of a single task
+  //   if (this.dialog == true) {
+  //     //this.getTask();
+  //     this.tasks = this.$store.state.tasks;
+  //   }
+  //   //Close dialog and execute the resetForm function
+  //   if (this.dialog == false) {
+  //     this.editMode = false;
+  //     //wait one second after close form
+  //     setTimeout(() => this.resetForm(), 100);
+  //   }
+  //   //seting the editMode of the form
+  //   if (this.icon === "mdi-plus-circle") {
+  //     this.editMode = true;
+  //   }
+  // },
 
   //data variable required for the form component
   data: (vm) => ({
@@ -198,6 +190,9 @@ export default {
     details: "",
     comment: "",
     tag: "",
+
+    timeout: 2000,
+
     titleRules: [(v) => !!v || "Title is required"],
     date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
@@ -213,6 +208,11 @@ export default {
   computed: {
     computedDateFormatted() {
       return this.formatDate(this.date);
+    },
+    TASK_COMPUTED: {
+      get() {
+        return this.$store.state.tasks;
+      },
     },
   },
 
@@ -257,16 +257,24 @@ export default {
           try {
             const response = await service.postTask(taskObj);
             //Checking if the response is success
-            if (response.data.detail === "Éxito al crear la tarea") {
-              this.tasks[0].push(response.data.task);
+            if (response.success) {
               //updating the state
-              this.$store.dispatch("addTasks", this.tasks);
-              this.dialog = false;
+              this.$store.dispatch("addOneTask", response.data);
+
+              this.alert = true;
+              this.msg = "La nota se agregó";
+              setTimeout(() => {
+                this.alert = false;
+                this.msg = "";
+              }, 2000);
             }
           } catch (error) {
             this.alert = true;
             this.msg = "An error has ocurred " + error;
-            setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+            setTimeout(() => {
+              this.alert = false;
+              this.msg = "";
+            }, 2000);
           }
         } else {
           this.alert = true;

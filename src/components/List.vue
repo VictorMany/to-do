@@ -1,12 +1,6 @@
 <template>
   <v-row class="pa-0 ma-0">
-    <v-col
-      cols="12"
-      md="6"
-      lg="4"
-      v-for="t in TASKS"
-      :key="t._id"
-    >
+    <v-col cols="12" md="6" lg="4" v-for="t in TASK_COMPUTED" :key="t._id">
       <card
         :id="t._id"
         :title="t.title"
@@ -15,7 +9,7 @@
         :due_date="t.due_date"
       />
       <!--Rendering other component for no tasks-->
-      <div v-if="display">
+      <div v-if="TASK_COMPUTED.length === 0">
         <h4 class="text-center">No tasks !</h4>
       </div>
     </v-col>
@@ -39,10 +33,10 @@ export default {
     this.getAllTasks();
   },
 
-  //Checking if tasks array has items to iterate
-  updated() {
-    this.display = this.TASKS["length"] == 0;
-  },
+  // //Checking if tasks array has items to iterate
+  // updated() {
+  //   this.display = this.TASKS.length == 0;
+  // },
 
   data: () => ({
     tasks: [],
@@ -54,10 +48,8 @@ export default {
     async getAllTasks() {
       try {
         const response = await service.getTasks();
-        console.log("LA DATA", response);
-        if (response) {
-          this.tasks = response;
-          this.$store.dispatch("addTasks", this.tasks);
+        if (response.success) {
+          this.$store.dispatch("addTasks", response.data);
         }
       } catch (error) {
         console.log(error);
@@ -67,8 +59,8 @@ export default {
 
   //Computed methods for TASKS state
   computed: {
-    TASKS() {
-      return this.$store.state.tasks[0];
+    TASK_COMPUTED() {
+      return this.$store.state.tasks;
     },
   },
 };

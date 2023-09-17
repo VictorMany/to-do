@@ -11,8 +11,11 @@ export default new Vuex.Store({
     },
     //mutations for array tasks state
     mutations: {
-        UPDATE_TASKS(state, payload) {
+        ADD_TASKS(state, payload) {
             state.tasks = payload;
+        },
+        ADD_ONE_TASK(state, payload) {
+            state.tasks.unshift(payload);
         },
         UPDATE_AUXTASKS(state, payload) {
             state.auxTasks = payload;
@@ -21,11 +24,13 @@ export default new Vuex.Store({
     //Actions that call my mutations (I can call this actions from anywhere inside the project)
     actions: {
         addTasks(context, payload) {
-            let tasks = context.state.tasks
-            tasks = [...tasks, payload]
-            context.commit('UPDATE_TASKS', tasks)
-            context.commit('UPDATE_AUXTASKS', tasks)
+            context.commit('ADD_TASKS', payload)
         },
+
+        addOneTask(context, payload) {
+            context.commit('ADD_ONE_TASK', payload)
+        },
+        
         searchTasks(context, payload) {
             let tasks = [payload]
             context.commit('UPDATE_TASKS', tasks)

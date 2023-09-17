@@ -3,7 +3,10 @@
     <!--The message welcome-->
     <v-row class="pa-0 ma-0">
       <v-col cols="12">
-        <h1 class="styleh1">{{ msg }}</h1>
+        <v-row no-gutters class="justify-space-between">
+          <h1 class="styleh1">{{ msg }}</h1>
+          <Form icon="mdi-plus-circle" />
+        </v-row>
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field
@@ -19,7 +22,7 @@
           clear-icon="mdi-close-circle-outline"
         />
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12" class="pt-0 px-0" style="height: 85vh !important; overflow: scroll">
         <list />
       </v-col>
     </v-row>
@@ -28,8 +31,9 @@
 
 <script>
 import List from "./List.vue";
+import Form from "./Form.vue";
 export default {
-  components: { List },
+  components: { List, Form },
   name: "Home",
   /**
    * Home props
@@ -95,15 +99,11 @@ export default {
 /* Style DESKTOP screen */
 @media all and (min-width: 701px) {
   .home-cont-style {
-    padding-top: 10px;
     padding-inline: 10%;
   }
 }
 
-/* Style MOBILE screen */
-@media all and (max-width: 701px) {
-  .home-cont-style {
-    padding: 10px;
-  }
+.home-cont-style {
+  position: fixed;
 }
 </style>

@@ -1,20 +1,18 @@
 <template>
-  <v-app class="main-container-app">
-    <app-bar />
-    <v-main class="body-style">
+  <v-app>
+    <Form icon="mdi-plus-circle" />
+    <v-main class="body-style main-container-app">
       <home msg="Bienvenido" />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import AppBar from "./components/AppBar.vue";
 import Home from "./components/Home.vue";
 
 export default {
   name: "App",
   components: {
-    AppBar,
     Home,
   },
 };
@@ -55,7 +53,12 @@ p {
 }
 
 .main-container-app {
-  height: 100vh !important;
+  overflow: scroll;
+}
+
+.main-container-app-bar {
+  top: 0;
+  position: fixed;
 }
 </style>
 
