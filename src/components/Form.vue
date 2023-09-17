@@ -24,7 +24,7 @@
           v-on="on"
           color="#F59762"
           style="
-            bottom: 30px;
+            bottom: 60px;
             right: 30px;
             z-index: 100;
             border-radius: 12px;

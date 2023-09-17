@@ -113,11 +113,4 @@ export default {
   overflow: scroll;
 }
 
-/* Style DESKTOP screen */
-@media all and (max-height: 701px) {
-  .container-cards {
-    height: 75vh !important;
-    overflow: scroll;
-  }
-}
 </style>
