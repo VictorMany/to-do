@@ -113,4 +113,10 @@ export default {
   overflow: scroll;
 }
 
+@media screen and (max-width: 600px) {
+  .container-cards {
+    height: 75vh !important;
+    overflow: scroll;
+  }
+}
 </style>
