@@ -147,7 +147,7 @@
       >
         <v-row justify="space-between" no-gutters>
           {{ msg }}
-          <v-icon color="#30ffb3"> mdi-check-outline </v-icon>
+          <!-- <v-icon color="#30ffb3"> mdi-check-outline </v-icon> -->
         </v-row>
       </v-snackbar>
     </template>
@@ -309,10 +309,10 @@ export default {
                 note: response.data,
                 index: this.indexNote,
               });
-              this.msg = "La nota se actualizó";
+              this.msg = "Actualizado";
             } else {
               this.$store.dispatch("addOneTask", response.data);
-              this.msg = "La nota se agregó";
+              this.msg = "Agregado";
             }
             this.alert = true;
 
@@ -428,7 +428,7 @@ export default {
             this.$store.dispatch("deleteOneTask", this.indexNote);
 
             this.alert = true;
-            this.msg = "Nota eliminada";
+            this.msg = "Eliminada";
             setTimeout(() => {
               this.alert = false;
               this.msg = "";
