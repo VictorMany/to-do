@@ -1,14 +1,22 @@
 <template>
   <div>
-    <v-row class="pa-2 ma-0">
+    <v-row class="pa-2 ma-0" v-if="TASK_COMPUTED.length > 0">
       <v-col cols="6" md="4" class="pa-1">
         <div v-for="(t, index) in TASK_COMPUTED" :key="t._id" class="pb-1">
-          <card v-if="index % 2 == 0" v-bind="t" @click.native="openEdit(t, index)" />
+          <card
+            v-if="index % 2 == 0"
+            v-bind="t"
+            @click.native="openEdit(t, index)"
+          />
         </div>
       </v-col>
       <v-col cols="6" md="4" class="pa-1">
         <div v-for="(t, index) in TASK_COMPUTED" :key="t._id" class="pb-1">
-          <card v-if="index % 2 != 0" v-bind="t" @click.native="openEdit(t, index)" />
+          <card
+            v-if="index % 2 != 0"
+            v-bind="t"
+            @click.native="openEdit(t, index)"
+          />
         </div>
       </v-col>
     </v-row>
@@ -46,7 +54,7 @@ export default {
     },
 
     openEdit(item, index) {
-      item.index = index
+      item.index = index;
       this.OPEN_EDIT = item;
     },
   },

@@ -45,11 +45,6 @@ export default new Vuex.Store({
             context.commit('ADD_ONE_TASK', payload)
         },
 
-        searchTasks(context, payload) {
-            let tasks = [payload]
-            context.commit('UPDATE_TASKS', tasks)
-        },
-
         openEdit(context, payload) {
             context.commit('OPEN_EDIT', payload)
         },

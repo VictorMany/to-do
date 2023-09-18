@@ -32,6 +32,8 @@
 <script>
 import List from "./List.vue";
 import Form from "./Form.vue";
+import service from "../service/service";
+
 export default {
   components: { List, Form },
   name: "Home",
@@ -45,6 +47,9 @@ export default {
   data: () => ({
     search: "",
     tasks: [],
+
+    timeoutSearch: null,
+    delaySearch: 500, // El tiempo que le dejas antes de volver a escribir de nuevo
   }),
 
   /**
@@ -55,23 +60,19 @@ export default {
   },
 
   methods: {
-    /**
-     * @setSearch
-     * 1-. Get all the aux tasks array and seting to the tasks array (refill all tasks)
-     * 2-. If search is not null, then start the filtering the actual state tasks, so it can be reflected in other components
-     * 3-. Set the filtered tasks to the tasks state
-     */
     setSearch() {
-      this.$store.dispatch("searchTasks", this.AUXTASKS);
-      if (this.search == null) {
-        this.$store.dispatch("searchTasks", this.AUXTASKS);
-      } else {
-        this.tasks = this.TASKS.filter((e) => {
-          if (e.title.toLowerCase().includes(this.search.toLowerCase()))
-            return e;
-        });
-        this.$store.dispatch("searchTasks", this.tasks);
-      }
+      clearTimeout(this.timeoutSearch);
+      if (this.search === null) this.search = "";
+      this.timeoutSearch = setTimeout(async () => {
+        try {
+          const response = await service.getTasksByName(this.search);
+          if (response.success) {
+            this.$store.dispatch("addTasks", response.data);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }, this.delaySearch);
     },
   },
 
