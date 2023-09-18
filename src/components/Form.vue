@@ -133,14 +133,23 @@
           <v-btn class="text-capitalize" text @click="OPEN_EDIT.value = false"
             >Cancelar</v-btn
           >
-          <v-btn text @click="addNewTask()" class="text-capitalize">{{
+          <v-btn text @click.native="addNewTask()" class="text-capitalize">{{
             editMode ? "Actualizar" : "Guardar"
           }}</v-btn>
         </v-card-actions>
-        <v-snackbar v-model="alert" :timeout="timeout" shaped elevation="24">
-          {{ msg }}
-        </v-snackbar>
       </v-card>
+      <v-snackbar
+        v-model="alert"
+        :timeout="timeout"
+        shaped
+        color="blue-grey darken-4"
+        elevation="24"
+      >
+        <v-row justify="space-between" no-gutters>
+          {{ msg }}
+          <v-icon color="#30ffb3"> mdi-check-outline </v-icon>
+        </v-row>
+      </v-snackbar>
     </template>
   </v-dialog>
 </template>
@@ -206,6 +215,8 @@ export default {
     comment: "",
     tag: "",
 
+    indexNote: 0,
+
     timeout: 2000,
 
     titleRules: [(v) => !!v || "Title is required"],
@@ -250,7 +261,7 @@ export default {
         if (val._id) {
           console.log("vamos a editar", val);
 
-          this._id = val._id
+          this._id = val._id;
           this.title = val.title;
           this.details = val.details;
           this.is_completed = val.is_completed;
@@ -259,6 +270,7 @@ export default {
             this.date = new Date(val.due_date).toISOString().slice(0, 10);
 
           this.editMode = true;
+          this.indexNote = val.index;
         }
       },
       deep: true,
@@ -275,74 +287,41 @@ export default {
     },
 
     async addNewTask() {
-      if (this.editMode) {
-        //if is an edit task
-        this.updateTask();
-      } else {
-        if (this.title !== "") {
-          let taskObj = {
-            title: this.title,
-            is_completed: this.is_completed,
-            due_date: this.date,
-            details: this.details ? this.details : null,
-          };
-
-          try {
-            const response = await service.postTask(taskObj);
-            //Checking if the response is success
-            if (response.success) {
-              //updating the state
-              this.$store.dispatch("addOneTask", response.data);
-
-              this.alert = true;
-              this.msg = "La nota se agregó";
-              setTimeout(() => {
-                this.alert = false;
-                this.msg = "";
-              }, 2000);
-            }
-          } catch (error) {
-            this.alert = true;
-            this.msg = "An error has ocurred " + error;
-            setTimeout(() => {
-              this.alert = false;
-              this.msg = "";
-            }, 2000);
-          }
-        } else {
-          this.alert = true;
-          this.msg = "Title is required";
-          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
-        }
-      }
-    },
-
-    //Update a task
-    async updateTask() {
       if (this.title !== "") {
         let taskObj = {
-          _id: this._id,
           title: this.title,
-          is_completed: this.is_completed ? this.is_completed : 0,
+          is_completed: this.is_completed,
           due_date: this.date,
           details: this.details ? this.details : null,
         };
 
-        console.log("Trataando de editar", taskObj)
+        if (this._id) {
+          taskObj._id = this._id;
+        }
 
         try {
-          const response = await service.updateTask(taskObj);
+          const response = await service.postTask(taskObj);
           //Checking if the response is success
           if (response.success) {
             //updating the state
-            this.$store.dispatch("addOneTask", response.data);
-
+            if (this.editMode) {
+              this.$store.dispatch("updateOneTask", {
+                note: response.data,
+                index: this.indexNote,
+              });
+              this.msg = "La nota se actualizó";
+            } else {
+              this.$store.dispatch("addOneTask", response.data);
+              this.msg = "La nota se agregó";
+            }
             this.alert = true;
-            this.msg = "La nota se agregó";
+
             setTimeout(() => {
               this.alert = false;
               this.msg = "";
-            }, 2000);
+              this.resetForm();
+              this.OPEN_EDIT = false;
+            }, 500);
           }
         } catch (error) {
           this.alert = true;
@@ -350,7 +329,7 @@ export default {
           setTimeout(() => {
             this.alert = false;
             this.msg = "";
-          }, 2000);
+          }, 500);
         }
       } else {
         this.alert = true;
@@ -358,6 +337,48 @@ export default {
         setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
       }
     },
+
+    // //Update a task
+    // async updateTask() {
+    //   if (this.title !== "") {
+    //     let taskObj = {
+    //       _id: this._id,
+    //       title: this.title,
+    //       is_completed: this.is_completed ? this.is_completed : 0,
+    //       due_date: this.date,
+    //       details: this.details ? this.details : null,
+    //     };
+
+    //     console.log("Trataando de editar", taskObj);
+
+    //     try {
+    //       const response = await service.updateTask(taskObj);
+    //       //Checking if the response is success
+    //       if (response.success) {
+    //         //updating the state
+    //         this.$store.dispatch("addOneTask", response.data);
+
+    //         this.alert = true;
+    //         this.msg = "La nota se agregó";
+    //         setTimeout(() => {
+    //           this.alert = false;
+    //           this.msg = "";
+    //         }, 2000);
+    //       }
+    //     } catch (error) {
+    //       this.alert = true;
+    //       this.msg = "An error has ocurred " + error;
+    //       setTimeout(() => {
+    //         this.alert = false;
+    //         this.msg = "";
+    //       }, 2000);
+    //     }
+    //   } else {
+    //     this.alert = true;
+    //     this.msg = "Title is required";
+    //     setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+    //   }
+    // },
 
     // //Get the complete detail of a task
     // async getTask() {
@@ -398,19 +419,22 @@ export default {
 
     //Delete a task by id
     async deleteTask() {
-      if (this.id) {
+      if (this._id) {
         try {
-          const response = await service.deleteTask(this.id);
+          const response = await service.deleteTask(this._id);
           //Checking if the response is success
-          if (response.data.detail === "Éxito al eliminar la tarea") {
-            this.tasks = this.$store.state.tasks;
-            this.tasks[0].map((e, i) => {
-              if (e.id === this.id) {
-                this.tasks[0].splice(i, 1);
-              }
-            });
+          if (response.success) {
             //updating the state
-            this.$store.dispatch("addTasks", this.tasks);
+            this.$store.dispatch("deleteOneTask", this.indexNote);
+
+            this.alert = true;
+            this.msg = "Nota eliminada";
+            setTimeout(() => {
+              this.alert = false;
+              this.msg = "";
+              this.resetForm();
+              this.OPEN_EDIT = false;
+            }, 500);
           }
         } catch (error) {
           this.alert = true;

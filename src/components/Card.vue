@@ -13,17 +13,6 @@
         </v-col>
       </v-row>
     </v-card-actions>
-    <!-- <div
-        v-if="due_date"
-        class="text--secondary text-start ps-3 pb-2 font-weight-thin date-style"
-      >
-        {{ due_date }}
-      </div>
-      <v-overlay absolute color="#00000000" class="div-overlay">
-        <v-col cols="12" class="detail-style">
-          <Form :id="id" :opened="true" />
-        </v-col>
-      </v-overlay> -->
   </v-card>
 </template>
 

@@ -24,6 +24,16 @@ export default new Vuex.Store({
         OPEN_EDIT(state, payload) {
             state.openEdit = payload;
         },
+        UPDATE_ONE_TASK(state, payload) {
+            state.tasks.splice(payload.index, 1)
+
+            state.tasks = [...state.tasks.slice(0, payload.index),
+            payload.note,
+            ...state.tasks.slice(payload.index)]
+        },
+        DELETE_ONE_TASK(state, payload) {
+            state.tasks.splice(payload, 1)
+        }
     },
     //Actions that call my mutations (I can call this actions from anywhere inside the project)
     actions: {
@@ -34,7 +44,7 @@ export default new Vuex.Store({
         addOneTask(context, payload) {
             context.commit('ADD_ONE_TASK', payload)
         },
-        
+
         searchTasks(context, payload) {
             let tasks = [payload]
             context.commit('UPDATE_TASKS', tasks)
@@ -42,6 +52,14 @@ export default new Vuex.Store({
 
         openEdit(context, payload) {
             context.commit('OPEN_EDIT', payload)
-        }
+        },
+
+        updateOneTask(context, payload) {
+            context.commit('UPDATE_ONE_TASK', payload)
+        },
+
+        deleteOneTask(context, payload) {
+            context.commit('DELETE_ONE_TASK', payload)
+        },
     }
 })

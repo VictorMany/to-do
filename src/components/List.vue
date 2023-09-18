@@ -3,12 +3,12 @@
     <v-row class="pa-2 ma-0">
       <v-col cols="6" md="4" class="pa-1">
         <div v-for="(t, index) in TASK_COMPUTED" :key="t._id" class="pb-1">
-          <card v-if="index % 2 == 0" v-bind="t" @click.native="openEdit(t)" />
+          <card v-if="index % 2 == 0" v-bind="t" @click.native="openEdit(t, index)" />
         </div>
       </v-col>
       <v-col cols="6" md="4" class="pa-1">
         <div v-for="(t, index) in TASK_COMPUTED" :key="t._id" class="pb-1">
-          <card v-if="index % 2 != 0" v-bind="t" @click.native="openEdit(t)" />
+          <card v-if="index % 2 != 0" v-bind="t" @click.native="openEdit(t, index)" />
         </div>
       </v-col>
     </v-row>
@@ -23,19 +23,9 @@ import service from "../service/service";
 export default {
   name: "List",
   components: { Card },
-  /**
-   * Lifecycle methods
-   */
-
-  //Calling get all the tasks
   created() {
     this.getAllTasks();
   },
-
-  // //Checking if tasks array has items to iterate
-  // updated() {
-  //   this.display = this.TASKS.length == 0;
-  // },
 
   data: () => ({
     tasks: [],
@@ -55,7 +45,8 @@ export default {
       }
     },
 
-    openEdit(item) {
+    openEdit(item, index) {
+      item.index = index
       this.OPEN_EDIT = item;
     },
   },
