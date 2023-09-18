@@ -45,6 +45,7 @@
               class="float-right ms-2 pe-2 ps-2"
               :class="is_completed == 1 ? 'white--text' : 'black--text'"
               :color="is_completed == 1 ? '#02C77B' : '#FFFB07'"
+              @click="changeStatus()"
               >{{ is_completed == 1 ? "Completada" : "Pendiente" }}
               <v-icon small class="ps-1">
                 {{
@@ -166,7 +167,6 @@ export default {
    */
   props: {
     icon: { type: String },
-    id: { type: Number },
     opened: { type: Boolean },
   },
 
@@ -180,23 +180,6 @@ export default {
     }
   },
 
-  // updated() {
-  //   //Calling function to consult the detail of a single task
-  //   if (this.dialog == true) {
-  //     //this.getTask();
-  //     this.tasks = this.$store.state.tasks;
-  //   }
-  //   //Close dialog and execute the resetForm function
-  //   if (this.dialog == false) {
-  //     this.editMode = false;
-  //     //wait one second after close form
-  //     setTimeout(() => this.resetForm(), 100);
-  //   }
-  //   //seting the editMode of the form
-  //   if (this.icon === "mdi-plus-circle") {
-  //     this.editMode = true;
-  //   }
-  // },
 
   //data variable required for the form component
   data: (vm) => ({
@@ -253,14 +236,11 @@ export default {
 
   watch: {
     date(val) {
-      console.log(val);
       this.dateFormatted = this.formatDate(val);
     },
     OPEN_EDIT: {
       handler(val) {
         if (val._id) {
-          console.log("vamos a editar", val);
-
           this._id = val._id;
           this.title = val.title;
           this.details = val.details;
@@ -338,85 +318,6 @@ export default {
       }
     },
 
-    // //Update a task
-    // async updateTask() {
-    //   if (this.title !== "") {
-    //     let taskObj = {
-    //       _id: this._id,
-    //       title: this.title,
-    //       is_completed: this.is_completed ? this.is_completed : 0,
-    //       due_date: this.date,
-    //       details: this.details ? this.details : null,
-    //     };
-
-    //     console.log("Trataando de editar", taskObj);
-
-    //     try {
-    //       const response = await service.updateTask(taskObj);
-    //       //Checking if the response is success
-    //       if (response.success) {
-    //         //updating the state
-    //         this.$store.dispatch("addOneTask", response.data);
-
-    //         this.alert = true;
-    //         this.msg = "La nota se agregó";
-    //         setTimeout(() => {
-    //           this.alert = false;
-    //           this.msg = "";
-    //         }, 2000);
-    //       }
-    //     } catch (error) {
-    //       this.alert = true;
-    //       this.msg = "An error has ocurred " + error;
-    //       setTimeout(() => {
-    //         this.alert = false;
-    //         this.msg = "";
-    //       }, 2000);
-    //     }
-    //   } else {
-    //     this.alert = true;
-    //     this.msg = "Title is required";
-    //     setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
-    //   }
-    // },
-
-    // //Get the complete detail of a task
-    // async getTask() {
-    //   if (this.id) {
-    //     try {
-    //       const response = await service.getTask(this.id);
-    //       let data = response.data[0];
-    //       if (response.data[0]) {
-    //         //Turning the tags into array variable
-    //         if (data.tags) {
-    //           if (data.tags.includes(",")) {
-    //             this.tags = data.tags.split(",");
-    //           } else {
-    //             this.tags.push(data.tags);
-    //           }
-    //         }
-    //         //Turning the tags into array variable
-    //         if (data.comments) {
-    //           if (data.comments.includes(",")) {
-    //             this.comments = data.comments.split(",");
-    //           } else {
-    //             this.comments.push(data.comments);
-    //           }
-    //         }
-    //         this.title = data.title;
-    //         this.details = data.details;
-    //         this.is_completed = data.is_completed;
-    //         this.date = data.due_date;
-    //       }
-    //     } catch (error) {
-    //       this.alert = true;
-    //       this.msg = "An error has ocurred " + error;
-    //       setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
-    //     }
-    //     this.OPEN_EDIT = true;
-    //   }
-    // },
-
     //Delete a task by id
     async deleteTask() {
       if (this._id) {
@@ -424,9 +325,6 @@ export default {
           const response = await service.deleteTask(this._id);
           //Checking if the response is success
           if (response.success) {
-            //updating the state
-            this.$store.dispatch("deleteOneTask", this.indexNote);
-
             this.alert = true;
             this.msg = "Eliminada";
             setTimeout(() => {
@@ -435,6 +333,35 @@ export default {
               this.resetForm();
               this.OPEN_EDIT = false;
             }, 500);
+            //updating the state
+            this.$store.dispatch("deleteOneTask", this.indexNote);
+          }
+        } catch (error) {
+          this.alert = true;
+          this.msg = "Ocurrió un error " + error;
+          setTimeout(() => ((this.alert = false), (this.msg = "")), 2000);
+        }
+      }
+    },
+
+    async changeStatus() {
+      if (this._id) {
+        let completed = this.is_completed == 1 ? 0 : 1;
+
+        let taskObj = {
+          is_completed: completed,
+          _id: this._id,
+        };
+        try {
+          const response = await service.changeStatus(taskObj);
+          //Checking if the response is success
+          if (response.success) {
+            this.is_completed = completed;
+
+            this.$store.dispatch("updateOneTask", {
+              note: response.data,
+              index: this.indexNote,
+            });
           }
         } catch (error) {
           this.alert = true;

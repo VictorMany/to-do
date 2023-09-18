@@ -32,7 +32,6 @@ export default {
 
   props: {
     //Title propis required
-    id: { type: String, required: true },
     details: { type: String, required: true },
     //Title propis required
     title: { type: String, required: true },

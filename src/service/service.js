@@ -14,7 +14,6 @@ export default class service {
         try {
             const response = await axios.get(this.endpoint);
             // Manejar la respuesta aquí, por ejemplo:
-            console.log(response.data); // Muestra los datos de la respuesta en la consola
             return response.data; // Devuelve los datos de la respuesta
         } catch (error) {
             // Manejar errores aquí
@@ -50,10 +49,6 @@ export default class service {
                     }
                 }
             );
-
-            // Manejar la respuesta aquí
-            console.log('Respuesta del servidor:', response.data);
-
             return response.data; // Devuelve los datos de la respuesta
         } catch (error) {
             // Manejar errores aquí
@@ -61,6 +56,26 @@ export default class service {
             throw error; // Opcionalmente, puedes lanzar el error para que se maneje en otro lugar
         }
     }
+
+    static async changeStatus(post) {
+        try {
+            const response = await axios.patch(
+                `${service.endpoint}`,
+                post,
+                {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                }
+            );
+            return response.data; // Devuelve los datos de la respuesta
+        } catch (error) {
+            // Manejar errores aquí
+            console.error('Error al realizar la solicitud PATCH:', error);
+            throw error; // Opcionalmente, puedes lanzar el error para que se maneje en otro lugar
+        }
+    }
+
 
     static async deleteTask(id) {
         let params = {
@@ -76,10 +91,6 @@ export default class service {
                     }
                 }
             );
-
-            // Manejar la respuesta aquí
-            console.log('Respuesta del servidor:', response.data);
-
             return response.data; // Devuelve los datos de la respuesta
         } catch (error) {
             // Manejar errores aquí
