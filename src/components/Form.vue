@@ -50,8 +50,8 @@
               <v-icon small class="ps-1">
                 {{
                   is_completed == 1
-                    ? "mdi-check-circle-outline"
-                    : "mdi-dots-horizontal-circle-outline"
+                    ? "mdi-timeline-check-outline"
+                    : "mdi-timeline-clock-outline "
                 }}</v-icon
               >
             </v-chip>
@@ -160,7 +160,6 @@
 //Service endpoints
 import service from "../service/service";
 
-
 export default {
   name: "Form",
   /**
@@ -180,7 +179,6 @@ export default {
       this.editMode = true;
     }
   },
-
 
   //data variable required for the form component
   data: (vm) => ({

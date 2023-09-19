@@ -34,6 +34,7 @@
       <div
         v-if="isActions"
         class="d-flex transition-fast-in-fast-out v-card--reveal"
+        @click="closeActions()"
         style="height: 100%; width: 100%; position: absolute"
       >
         <v-row no-gutters justify="center" align="center" class="form-card">
@@ -51,13 +52,13 @@
                 <v-icon small>
                   {{
                     is_completed == 1
-                      ? "mdi-check-circle-outline"
-                      : "mdi-dots-horizontal-circle-outline"
+                      ? "mdi-timeline-check-outline"
+                      : "mdi-timeline-clock-outline "
                   }}</v-icon
                 >
               </v-chip>
               <v-chip class="px-2" @click="handleTouchEnd()">
-                <v-icon small>mdi-backspace-outline</v-icon>
+                <v-icon small>mdi-exit-to-app</v-icon>
               </v-chip>
             </v-row>
           </v-col>
@@ -82,6 +83,8 @@ export default {
     msg: "",
     alert: false,
     timeout: 2000,
+
+    selectedAction: false,
   }),
 
   /**
@@ -100,11 +103,15 @@ export default {
       type: Number,
       required: true,
     },
+    isActionsProp: { type: Boolean, required: false, default: false },
     //Completed prop is required
     //The rest of the props are optionals
   },
 
   methods: {
+    // onClickOutside() {
+    //   this.active = false;
+    // },
     getCurrentDate(dueDate) {
       const fechaOriginal = new Date(dueDate);
       // Suma un día a la fecha original
@@ -113,14 +120,30 @@ export default {
       return new Date(fechaOriginal).toDateString();
     },
 
+    closeActions() {
+      if (!this.selectedAction) {
+        this.handleTouchEnd();
+      }
+    },
+
     handleTouchStart() {
       setTimeout(() => {
-        if (this.OPEN_EDIT === false) this.isActions = true;
-      }, 200);
+        if (this.OPEN_EDIT === false && this.isActions == false) {
+          this.$emit("update:isActionsProp", false);
+        }
+      }, 300);
+      setTimeout(() => {
+        if (this.OPEN_EDIT === false) {
+          this.isActions = true;
+          this.$emit("update:isActionsProp", true);
+        }
+      }, 500);
       // Agregar lógica adicional si es necesario
     },
 
     async changeStatus() {
+      this.selectedAction = true;
+
       if (this._id) {
         let completed = this.is_completed == 1 ? 0 : 1;
 
@@ -136,32 +159,41 @@ export default {
               note: response.data,
               index: this.index,
             });
+            this.selectedAction = false;
           }
         } catch (error) {
-          console.log(error)
+          console.log(error);
+          this.selectedAction = false;
         }
       }
     },
 
     //Delete a task by id
     async deleteTask() {
+      this.selectedAction = true;
+
       if (this._id) {
         try {
           const response = await service.deleteTask(this._id);
           //Checking if the response is success
           if (response.success) {
             this.$store.dispatch("deleteOneTask", this.index);
+            this.selectedAction = false;
           }
         } catch (error) {
-          console.log(error)
+          console.log(error);
+          this.selectedAction = false;
         }
       }
     },
 
     handleTouchEnd() {
+      this.$emit("update:isActionsProp", true);
+
       setTimeout(() => {
         this.isActions = false;
-      }, 200);
+        this.selectedAction = false;
+      }, 500);
     },
 
     openEdit() {
@@ -184,7 +216,19 @@ export default {
         return this.$store.state.openEdit;
       },
       set(val) {
+        this.$emit("update:isActionsProp", false);
         this.$store.dispatch("openEdit", val);
+      },
+    },
+  },
+
+  watch: {
+    "$props.isActionsProp": {
+      handler(val) {
+        if (val === false) {
+          this.isActions = false;
+          this.selectedAction = false;
+        }
       },
     },
   },
