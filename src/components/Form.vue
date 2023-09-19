@@ -259,10 +259,13 @@ export default {
   methods: {
     //reset the form
     resetForm() {
+      this._id = null
       this.title = "";
       this.is_completed = 0;
       this.details = "";
       this.editMode = false;
+
+      console.log("Reseteando el form")
     },
 
     async addNewTask() {
