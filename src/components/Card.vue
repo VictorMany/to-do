@@ -7,12 +7,12 @@
     @blur="isActions = false"
   >
     <v-row justify="space-between" no-gutters>
-      <v-col cols="10" xs="5" class="text-truncate pt-4 ps-4 font-weight-normal px13 pb-0 text-truncate">
+      <v-col cols="10" xs="5" class="text-truncate pt-3 ps-4 font-weight-normal px13 pb-0 text-truncate">
           {{ title }}
       </v-col>
       <v-col cols="auto">
           <div
-            class="rounded-pill me-4 mt-5"
+            class="rounded-pill me-4 mt-4"
             :class="is_completed == 1 ? 'status-done' : 'status-pending'"
           />
       </v-col>
