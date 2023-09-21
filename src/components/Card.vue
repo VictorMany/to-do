@@ -6,20 +6,20 @@
     @click="openEdit"
     @blur="isActions = false"
   >
-    <v-card-title class="font-weight-normal px13 pb-2">
-      <v-row justify="space-between">
-        <v-col cols>
+    <v-row justify="space-between" no-gutters>
+      <v-col cols="10" class="text-truncate pt-4 ps-4 font-weight-normal px13 pb-0 text-truncate">
           {{ title }}
-        </v-col>
-        <v-col cols="auto">
+      </v-col>
+      <v-col cols="auto">
+        <v-card-title class="pb-0 pt-5">
           <div
             class="rounded-pill"
             :class="is_completed == 1 ? 'status-done' : 'status-pending'"
           />
-        </v-col>
-      </v-row>
-    </v-card-title>
-    <v-card-text class="font-weight-light px12">
+        </v-card-title>
+      </v-col>
+    </v-row>
+    <v-card-text class="font-weight-light px12 pt-2">
       {{ details }}
     </v-card-text>
     <v-card-actions v-if="due_date" class="font-weight-light px12 mt-auto">
