@@ -66,7 +66,7 @@
                     v-model="title"
                     :rules="titleRules"
                     label="Nota"
-                    class="border-rounded"
+                    class="border-rounded details-text"
                     dense
                     solo
                     background-color="rgba(31, 31, 40)"
@@ -81,7 +81,7 @@
                 <v-col cols="12" class="py-0">
                   <v-textarea
                     height="auto"
-                    class="border-rounded"
+                    class="border-rounded details-text"
                     dense
                     placeholder="Detalles de la nota"
                     solo
@@ -109,7 +109,7 @@
                         persistent-hint
                         prepend-inner-icon="mdi-calendar"
                         readonly
-                        class="border-rounded"
+                        class="border-rounded details-text"
                         dense
                         solo
                         background-color="rgba(31, 31, 40)"
@@ -436,5 +436,9 @@ export default {
 .form-card {
   background: #0000004a;
   backdrop-filter: blur(2px);
+}
+
+.details-text {
+  font-weight: 300 !important;
 }
 </style>
